@@ -1,0 +1,63 @@
+import discord
+from discord.ext import commands
+from discord import Colour
+from discord.ext.commands.core import is_owner
+
+intents = discord.Intents.default()
+intents.members = True
+
+client=commands.Bot(command_prefix='>')
+
+@client.event
+async def on_ready():
+    print("ready")
+
+@client.command(name="ping")
+async def ping(ctx):
+    embed=discord.Embed(name="Client latency",descrption="This command shows the latency of the bot.",color=discord.Colour.random())
+    embed.add_field(name="Client latency",value="Client latency is the time taken by the bot to respond to your command")
+    embed.add_field(name="Latency",value=f"{round(client.latency*1000)}ms")
+    embed.set_footer(text="Hello there",icon_url=ctx.author.avatar_url)
+    await ctx.send(embed=embed)
+
+def load_cogs():
+    cogs=[
+            "cogs.bank",
+            "cogs.moneymaking"
+            
+    ]
+    for i in cogs:
+        client.load_extension(i)
+
+@client.command()
+@is_owner()
+async def load(ctx,ext):
+    try:
+        client.load_extension(f"cogs.{ext}")
+        await ctx.send(f"{ext} cog successfully loaded.")
+    except:
+        await ctx.send(f"{ext} is not a valid cog name.")
+
+@client.command()
+@is_owner()
+async def unload(ctx,ext):
+    try:
+        client.unload_extension(f"cogs.{ext}")
+        await ctx.send(f"{ext} cog successfully unloaded.")
+    except:
+        await ctx.send(f"{ext} is not a valid cog name.")
+
+@client.command(aliases=['Reload','re','Re'])
+@is_owner()
+async def reload(ctx,ext):
+    try:
+        client.unload_extension(f"cogs.{ext}")
+        client.load_extension(f"cogs.{ext}")
+        await ctx.send(f"{ext} cog has been successfully reloaded.")
+    except:
+        await ctx.send(f"{ext} is not a valid cog name.")        
+
+
+load_cogs()       
+
+client.run('ODQzMDcxODIwODc4MTg0NDU4.YJ-h0Q.Vu_FtWbUpKluG0mISjUR7XL2DGs')    
