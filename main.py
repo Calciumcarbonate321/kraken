@@ -1,12 +1,35 @@
 import discord
 from discord.ext import commands
 from discord import Colour
-from discord.ext.commands.core import is_owner
+from discord.ext.commands.core import has_guild_permissions, has_permissions, is_owner
+import json
 
 intents = discord.Intents.default()
 intents.members = True
 
-client=commands.Bot(command_prefix='>')
+def get_prefix(client, message):
+    try:
+        with open('data/config.json', 'r',encoding='utf8') as r:
+            prefixes = json.load(r)
+            return prefixes[str(message.guild.id)]
+        
+    except KeyError: 
+        with open('data/config.json', 'r',encoding='utf8') as k:
+            prefixes = json.load(k)
+        prefixes[str(message.guild.id)] = '>'
+
+        with open('data/config.json', 'w',encoding='utf8') as j:
+            j.write(json.dumps(prefixes,indent=4))
+
+        with open('data/config.json', 'r',encoding='utf8') as t:
+            prefixes = json.load(t)
+            return prefixes[str(message.guild.id)]
+        
+    except: 
+        return '>'
+
+client=commands.Bot(command_prefix=(get_prefix))
+
 
 @client.event
 async def on_ready():
@@ -23,7 +46,8 @@ async def ping(ctx):
 def load_cogs():
     cogs=[
             "cogs.bank",
-            "cogs.moneymaking"
+            "cogs.moneymaking",
+            "cogs.math"
             
     ]
     for i in cogs:
@@ -55,7 +79,25 @@ async def reload(ctx,ext):
         client.load_extension(f"cogs.{ext}")
         await ctx.send(f"{ext} cog has been successfully reloaded.")
     except:
-        await ctx.send(f"{ext} is not a valid cog name.")        
+        await ctx.send(f"{ext} is not a valid cog name.")  
+
+@client.command(aliases=['setprefix','changeprefix'])      
+@has_permissions(administrator=True)
+async def prefix(ctx,prefix : str):
+    with open('data/config.json','r',encoding='utf8') as r:
+        data=json.load(r)
+        new_prefix=prefix
+        data[str(ctx.guild.id)]=str(new_prefix)
+    with open('data/config.json','w',encoding='utf8') as r:
+        r.write(json.dumps(data,indent=4))
+        await ctx.send(f"Success, new prefix is {prefix}")
+
+@client.event
+async def on_message(message):
+    if client.user.mentioned_in(message):
+        await message.channel.send(f"My prefix in this server is {await client.get_prefix(message)}")
+    await client.process_commands(message)
+
 
 
 load_cogs()       

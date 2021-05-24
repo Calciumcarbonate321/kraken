@@ -6,6 +6,8 @@ from discord.ext import commands
 from discord.ext.commands import Cog
 import random
 import json
+
+from discord.ext.commands.cooldowns import BucketType
 from cogs.bank import bank
 
 from discord.ext.commands.errors import NoEntryPointError
@@ -35,7 +37,7 @@ class money_making(commands.Cog):
     @beg.error
     async def beg_handler(self,ctx,error):
         if isinstance(error,commands.CommandOnCooldown):
-            await ctx.send(f"This command is on a cooldown,try after {error.retry_after}s")
+            await ctx.send(f"This command is on a cooldown,try after {round(error.retry_after)}s")
 
     @commands.command(aliases=['flip','coinflip'])
     async def coin(self,ctx,choice : str=None,bet : int=None):
@@ -115,6 +117,40 @@ class money_making(commands.Cog):
             embed.add_field(name="That's a tie",value="You lost nothing nor did you gain anything")
             embed.set_footer(text="That was a dramatic tie",icon_url=ctx.author.avatar_url)
             await ctx.send(embed=embed)
+
+    @commands.command(name="rob")
+    @commands.cooldown(1,30,type=BucketType.user)
+    async def rob(self,ctx,user : discord.User=None):
+        if user==None:
+            await ctx.send("Who are you robbing dum dum")
+            return
+        userid=str(user.id)
+        authid=str(ctx.author.id)
+        user_bal=await self.bi.get_wallet(userid)
+        auth_bal= await self.bi.get_wallet(authid)
+
+        if user_bal==0:
+            await ctx.send(f"{user.name} doesn't even have money in their wallet")
+            return
+
+        isRobFailed=random.randint(0,5)
+        if isRobFailed==0:
+            amountlost=random.randint(0,auth_bal)
+            await ctx.send(f"F you got caught while robbing and paid them ⌬{amountlost}")
+            await self.bi.remove_money(authid,amountlost)
+            await self.bi.add_money(userid,amountlost)
+        else:
+            amountgained=random.randint(0,user_bal)
+            await ctx.send(f"You stole ⌬{amountgained} from {user.name}")
+            await self.bi.remove_money(userid,amountgained)
+            await self.bi.add_money(authid,amountgained)
+
+    @rob.error
+    async def rob_handler(self,ctx,error):
+        if isinstance(error,commands.CommandOnCooldown):
+            await ctx.send(f"This command is on a cooldown,try after {round(error.retry_after)}s")
+
+
 
 
 def setup(client):
