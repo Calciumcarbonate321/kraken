@@ -48,7 +48,9 @@ def load_cogs():
             "cogs.bank",
             "cogs.moneymaking",
             "cogs.level",
-            "cogs.shopsys"     
+            "cogs.shopsys",
+            "cogs.help",
+            "cogs.fun"  
     ]
     for i in cogs:
         client.load_extension(i)

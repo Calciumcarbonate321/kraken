@@ -216,7 +216,7 @@ class shop(commands.Cog):
     
     
     @commands.command()
-    async def bag(self,ctx,user : discord.User):
+    async def bag(self,ctx,user : discord.User=None):
       if user==None:
         user = ctx.author
         return
