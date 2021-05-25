@@ -28,7 +28,7 @@ def get_prefix(client, message):
     except: 
         return '>'
 
-client=commands.Bot(command_prefix=(get_prefix))
+client=commands.Bot(command_prefix=(get_prefix),case_insensitive=True)
 
 
 @client.event
@@ -47,8 +47,8 @@ def load_cogs():
     cogs=[
             "cogs.bank",
             "cogs.moneymaking",
-            "cogs.math"
-            
+            "cogs.level",
+            "cogs.shopsys"     
     ]
     for i in cogs:
         client.load_extension(i)
@@ -71,7 +71,7 @@ async def unload(ctx,ext):
     except:
         await ctx.send(f"{ext} is not a valid cog name.")
 
-@client.command(aliases=['Reload','re','Re'])
+@client.command(aliases=['re'])
 @is_owner()
 async def reload(ctx,ext):
     try:

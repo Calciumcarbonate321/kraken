@@ -38,7 +38,7 @@ class shop(commands.Cog):
       users[str(user.id)][mode] += change
         
       with open("data/bank.json","w") as f:
-        json.dump(users,f)
+        f.write(json.dumps(users,indent=4))
     
       bal = [users[str(user.id)]["wallet"]]
       return bal
@@ -55,7 +55,7 @@ class shop(commands.Cog):
          users[str(user.id)]["bal"] = 0
       
       with open("data/bank.json","w") as f:
-         json.dump(users,f)
+         f.write(json.dumps(users,indent=4))
       return True
     
     async def open_shopacc(self,user):
@@ -68,7 +68,7 @@ class shop(commands.Cog):
          users[str(user.id)]["Inventory"] = None
       
       with open("data/shop.json","w") as f:
-         json.dump(users,f)
+         f.write(json.dumps(users,indent=4))
       return True
 
 
@@ -122,7 +122,7 @@ class shop(commands.Cog):
         users[str(user.id)]["bag"] = [obj]
     
       with open("data/shop.json","w") as f:
-        json.dump(users,f)
+        f.write(json.dumps(users,indent=4))
     
       await self.update_bank(user,cost*-1,"wallet")
       return [True,"Worked"]
@@ -170,7 +170,7 @@ class shop(commands.Cog):
       except:
         return [False,3]
       with open("data/shop.json","w") as f:
-        json.dump(users,f)
+        f.write(json.dumps(users,indent=4))
     
       await self.update_bank(user,cost,"wallet")
       return [True,"Worked"]
@@ -216,10 +216,16 @@ class shop(commands.Cog):
     
     
     @commands.command()
-    async def bag(self,ctx):
+    async def bag(self,ctx,user : discord.User):
+      if user==None:
+        user = ctx.author
+        return
+      else:
+        user=user
+
       await self.open_account(ctx.author)
       await self.open_shopacc(ctx.author)
-      user = ctx.author
+      
       users = await self.get_shop_data()
     
       try:

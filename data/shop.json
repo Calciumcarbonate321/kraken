@@ -1,1 +1,42 @@
-{"228876162078605312": {"Inventory": null, "bag": [{"itemid": "laptop", "amount": 13, "name": "Laptop"}, {"itemid": "fishingrod", "amount": 1, "name": "Fishing Rod"}]}}
+{
+    "228876162078605312": {
+        "Inventory": null,
+        "bag": [
+            {
+                "itemid": "laptop",
+                "amount": 13,
+                "name": "Laptop"
+            },
+            {
+                "itemid": "fishingrod",
+                "amount": 1,
+                "name": "Fishing Rod"
+            }
+        ]
+    },
+    "437163344525393920": {
+        "Inventory": null,
+        "bag": [
+            {
+                "itemid": "rifle",
+                "amount": 0,
+                "name": "Rifle"
+            },
+            {
+                "itemid": "fishingrod",
+                "amount": 1,
+                "name": "Fishing Rod"
+            },
+            {
+                "itemid": "laptop",
+                "amount": 1,
+                "name": "Laptop"
+            },
+            {
+                "itemid": "luckycharm",
+                "amount": 1,
+                "name": "Lucky Charm"
+            }
+        ]
+    }
+}
