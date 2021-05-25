@@ -13,6 +13,10 @@ mainshop = [
 {"name":"Fishing Rod","price":"5000","description":"used to fish","icon":":fishing_pole_and_fish:","itemid":"fishingrod"},
 {"name":"Laptop","price":"1000","description":"Post memes, blog and work","icon":":computer:","itemid":"laptop"},
 {"name":"Lucky Charm","price":"15000","description":"increases luck by 10%","icon":":shamrock:","itemid":"luckycharm"}
+
+
+
+
 ]
 
 class shop(commands.Cog):
@@ -66,6 +70,7 @@ class shop(commands.Cog):
       else:
          users[str(user.id)] = {}
          users[str(user.id)]["Inventory"] = None
+         users[str(user.id)]["bag"] = []
       
       with open("data/shop.json","w") as f:
          f.write(json.dumps(users,indent=4))
@@ -82,6 +87,7 @@ class shop(commands.Cog):
           name_ = name
           price = item["price"]
           rlname = item["name"]
+          iticon = item["icon"]
           break
     
     
@@ -97,8 +103,6 @@ class shop(commands.Cog):
     
     
       if bal<cost:
-        print(bal)
-        print(cost)
         return [False,2]
     
     
@@ -115,10 +119,10 @@ class shop(commands.Cog):
             break
           index+=1
         if t == None:
-          obj = {"itemid": item_name,"amount": amount, "name": rlname}
+          obj = {"itemid": item_name,"amount": amount, "name": rlname,"icon": iticon}
           users[str(user.id)]["bag"].append(obj)
       except:
-        obj = {"itemid":item_name,"amount":amount, "name": rlname}
+        obj = {"itemid":item_name,"amount":amount, "name": rlname, "icon": iticon}
         users[str(user.id)]["bag"] = [obj]
     
       with open("data/shop.json","w") as f:
@@ -142,8 +146,11 @@ class shop(commands.Cog):
     
       if name_ == None:
         return [False,1]
+      if amount == None:
+        amount = 1
+      amount = int(amount)
       
-      cost=price * amount
+      cost=int(price) * int(amount)
       cost = int(cost)
     
       users = await self.get_shop_data()
@@ -158,6 +165,7 @@ class shop(commands.Cog):
           n = thing["itemid"]
           if n == item_name:
             old_amt = thing["amount"]
+            old_amt = int(old_amt)
             new_amt = old_amt - amount
             if new_amt<0:
               return [False,2]
@@ -169,6 +177,7 @@ class shop(commands.Cog):
           return [False,3]
       except:
         return [False,3]
+
       with open("data/shop.json","w") as f:
         f.write(json.dumps(users,indent=4))
     
@@ -205,17 +214,18 @@ class shop(commands.Cog):
     
       if not res[0]:
         if res[1] ==1:
-          await ctx.send("wrong store buddy, we dont have that item")
+          await ctx.send(ctx.author.mention + ", This item does not exist!")
           return
         if res[1] ==2:
-          await ctx.send(f"you dont have enough money to buy {item}")
+          await ctx.send(ctx.author.mention + f", you dont have enough money to buy {item}(s)!")
           return
-        
-      await ctx.send(f"You just bought {amount} {item} ! pogchamp")
+      
+      await ctx.send(ctx.author.mention + f" >> *Successfully bought **{amount} {item}(s)**! Nice*")
     
     
     
     @commands.command()
+<<<<<<< HEAD
     async def bag(self,ctx,user : discord.User=None):
       if user==None:
         user = ctx.author
@@ -223,9 +233,12 @@ class shop(commands.Cog):
       else:
         user=user
 
+=======
+    async def inv(self,ctx):
+>>>>>>> ee39ab04c396385ddd80e5cc1afc2cc576d9bb22
       await self.open_account(ctx.author)
       await self.open_shopacc(ctx.author)
-      
+      user = ctx.author
       users = await self.get_shop_data()
     
       try:
@@ -233,12 +246,16 @@ class shop(commands.Cog):
       except:
         bag = []
     
-      em = discord.Embed(title = "Bag",color = discord.Color.red())
-    
+      em = discord.Embed(title = "__Inventory__",url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",color = discord.Color.red())
       for item in bag:
         name = item["name"]
         amount = item["amount"]
-        em.add_field(name = name , value = amount)
+        itid = item["itemid"]
+        iticonn = item["icon"]
+        em.add_field(name = f">> {name} {iticonn} " + f" | **{amount}**" , value = f"*ID* : `{itid}`")
+        em.add_field(name = "⠀",value = "⠀")
+        em.add_field(name = "⠀",value = "⠀")
+
         
       await ctx.send(embed = em)
       
@@ -249,18 +266,121 @@ class shop(commands.Cog):
     
       res = await self.sell_this(ctx.author,item,amount)
     
-      if not res[1]:
+      if not res[0]:
         if res[1] == 1:
-          await ctx.send("that object aint here")
+          await ctx.send(ctx.author.mention + ", That item does not exist!")
           return
         if res[1]== 2:
-          await ctx.send(f"you dont have {amount} {item} in your bag bruh")
+          await ctx.send(ctx.author.mention + f", you dont have {amount} {item}(s) in your bag!")
           return
         if res[1]== 3:
-          await ctx.send(f"you dont have {item} in your bag dumbass")
+          await ctx.send(ctx.author.mention + f", you dont have that item!")
           return
       
-      await ctx.send(f"you sold {amount} {item}, pog")
+      await ctx.send(ctx.author.mention + f" >> *Successfully sold **{amount} {item}(s)**! Nice*")
+
+
+    @commands.command()
+    async def opacmem(self,ctx,member:discord.Member):
+      await self.open_shopacc(member)
+      await ctx.send("opened an account for yo homie")
+
+
+
+
+    @commands.command()
+    async def gift(self,ctx,member:discord.Member = None, item_name = None, amount = None):
+      await self.open_shopacc(member)
+      for item in mainshop:
+        name = item["itemid"].lower()
+        if name == item_name:
+          name_ = name
+          price = item["price"]
+          rlname = item["name"]
+          iticon = item["icon"]
+          break
+
+
+
+      if member == None:
+        await ctx.send(ctx.author.mention + ", please mention the recipient of the gift!")
+        return
+      if item_name == None:
+        await ctx.send(ctx.author.mention + ", please mention the name of the gift!")
+        return
+      if amount == None:
+        amount = 1
+      
+      try:
+        amount=int(amount)
+      except:
+        await ctx.send(ctx.author.mention + ", You haven't entered a valid number!")
+        return
+      if amount < 0 :
+        await ctx.send(ctx.author.mention + ", enter a positive integer!")
+        return
+
+
+
+      users = await self.get_shop_data()
+      await self.open_shopacc(ctx.author)
+      await self.open_shopacc(member)
+      bag = users[str(ctx.author.id)]["bag"]
+      bag2 = users[str(member.id)]["bag"]
+
+      try:
+        index = 0
+        t = None
+        for thing in bag:
+          n = thing["itemid"]
+          if n == item_name:
+            old_amt = thing["amount"]
+            new_amt = old_amt - amount
+            if new_amt<0:
+              await ctx.send(ctx.author.mention + ", you dont have that many of that item!")
+              return
+            users[str(ctx.author.id)]["bag"][index]["amount"] = new_amt
+            t = 1
+            break
+        if t == None:
+          await ctx.send(ctx.author.mention + ", you dont have that item!")
+          return
+      except:
+        await ctx.send(ctx.author.mention + ", you dont have that item!")
+
+      try:
+        index = 0
+        t = None
+        for thing in bag2:
+          n = thing["itemid"]
+          if n == item_name:
+            old_amt = thing["amount"]
+            new_amt = old_amt + amount
+            users[str(member.id)]["bag"][index]["amount"] = new_amt
+            t = 1
+            break
+          index += 1
+        if t == None:
+          obj = {"itemid": item_name,"amount": amount, "name": rlname,"icon": iticon}
+          users[str(member.id)]["bag"].append(obj)
+      except:
+        obj = {"itemid":item_name,"amount":amount, "name": rlname, "icon": iticon}
+        users[str(member.id)]["bag"] = [obj]
+
+      with open("data/shop.json","w") as f:
+        f.write(json.dumps(users,indent=4))
+      await ctx.send (ctx.author.mention + f" >> Succesfully gifted **{amount} {item_name}(s)** to " + member.mention + "!")
+
+
+
+
+
+
+
+
+
+
+
 
 
 
