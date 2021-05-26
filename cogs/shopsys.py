@@ -225,20 +225,14 @@ class shop(commands.Cog):
     
     
     @commands.command()
-<<<<<<< HEAD
-    async def bag(self,ctx,user : discord.User=None):
+    async def inv(self,ctx,user : discord.User=None):
       if user==None:
-        user = ctx.author
-        return
+        user=ctx.author
       else:
         user=user
 
-=======
-    async def inv(self,ctx):
->>>>>>> ee39ab04c396385ddd80e5cc1afc2cc576d9bb22
-      await self.open_account(ctx.author)
-      await self.open_shopacc(ctx.author)
-      user = ctx.author
+      await self.open_account(user)
+      await self.open_shopacc(user)
       users = await self.get_shop_data()
     
       try:
