@@ -1,24 +1,3 @@
 {
-    "437163344525393920": {
-        "Inventory": null,
-        "bag": [
-            {
-                "itemid": "rifle",
-                "amount": 0,
-                "name": "Rifle",
-                "icon": ":gun:"
-            }
-        ]
-    },
-    "228876162078605312": {
-        "Inventory": null,
-        "bag": [
-            {
-                "itemid": "rifle",
-                "amount": 1,
-                "name": "Rifle",
-                "icon": ":gun:"
-            }
-        ]
-    }
+
 }
