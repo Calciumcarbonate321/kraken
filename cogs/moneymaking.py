@@ -9,6 +9,7 @@ import json
 
 from discord.ext.commands.cooldowns import BucketType
 from cogs.bank import bank
+from cogs.shopsys import shop
 
 from discord.ext.commands.errors import NoEntryPointError
 
@@ -16,18 +17,42 @@ class money_making(commands.Cog):
     def __init__(self,client):
         self.client=client
         self.bi=bank(client) #instance of the bank class from bank.py file
+        self.lol=shop(client)
 
     @commands.command(name="beg",description="This command is used to beg some bot currecncy.")
     @commands.cooldown(1,30,commands.BucketType.user)
     async def beg(self,ctx):
         userid=str(ctx.author.id)
-        payout=random.randint(0,800)
+        users = await self.lol.get_shop_data()
+        inv = users[str(userid)]["Inventory"]
+        for pog in inv:
+            eqp = pog["equipped"]
+            break
+        if eqp == "luckycharm":
+            payout = random.randint(0,1600)
+        else:
+            payout = random.randint(0,800)
+       
+        payout = int(payout)
+        
         if payout==0:
             embed=discord.Embed(title="Begging unsuccessful",url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",color=discord.Colour.red())
             embed.add_field(name="Sadge",value="You earned nothing by begging")
             embed.set_footer(text="Try begging again after sometime",icon_url=ctx.author.avatar_url)
             await ctx.send(embed=embed)
-            return
+            return 
+        elif payout > 800:
+            extra = (payout-800)
+            extra = int(extra)
+            tpo = (payout - extra)
+            tpo = int(tpo)
+            print(tpo)
+            embed=discord.Embed(title="Begging successful",url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",color=discord.Colour.red())
+            embed.add_field(name="Nice job",value= f"You earned ⌬`{tpo}`by begging, and you get an additional ⌬`{extra}` since you have a *Lucky Charm*")
+            embed.set_footer(text="Good job mate",icon_url=ctx.author.avatar_url)
+            print("works lmao")
+            await self.bi.add_money(userid,payout)
+            await ctx.send(embed=embed)
         else:
             embed=discord.Embed(title="Begging successful",url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",color=discord.Colour.red())
             embed.add_field(name="Nice job",value=f"You earned ⌬`{payout}`by begging")
