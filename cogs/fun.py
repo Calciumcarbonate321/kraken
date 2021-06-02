@@ -8,7 +8,7 @@ class Fun(commands.Cog):
     def __init__(self,client):
         self.client=client
 
-    @commands.command(aliases=['catpics','catpic','cat'],description="This command will show a random dog picture.")
+    @commands.command(aliases=['catpics','catpic','cat'],description="This command will show a random cat picture.")
     async def kitty(self,ctx):
         async with aiohttp.ClientSession() as session:
             request = await session.get('https://some-random-api.ml/img/cat') 
@@ -19,7 +19,7 @@ class Fun(commands.Cog):
             embed.set_image(url=catjson['link']) 
             embed.set_footer(text=factjson['fact'])
             await ctx.send(embed=embed) 
-    @commands.command(aliases=['dogpics','dogpic','dog'])
+    @commands.command(aliases=['dogpics','dogpic','dog'],description="This command will show a random cat picture.")
     async def doggo(self,ctx):
         async with aiohttp.ClientSession() as session:
             request = await session.get('https://some-random-api.ml/img/dog') 

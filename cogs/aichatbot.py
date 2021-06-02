@@ -12,7 +12,8 @@ class aibot(commands.Cog):
         self.client=client
         self.rs=RandomStuff(async_mode=True,api_key="WIZjeeP9Qz0u")
 
-    @commands.command(name="setaichannel") 
+    @commands.command(name="setaichannel",description="This command is used to set an ai channel for the server.") 
+    @commands.has_permissions(administrator=True)
     async def setaichannel(self,ctx,channel :discord.TextChannel=None):
         ai_channel_id=channel.id
         with open('data/aichannel.json','r',encoding='utf8') as r:

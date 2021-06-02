@@ -43,7 +43,7 @@ client.help_command=PrettyHelp(menu=menu)
 async def on_ready():
     print("ready")
 
-@client.command(name="ping",description="This command returns the client latency.")
+@client.command(name="ping",brief="This command returns the client latency.")
 async def ping(ctx):
     embed=discord.Embed(name="Client latency",descrption="This command shows the latency of the bot.",color=discord.Colour.random())
     embed.add_field(name="Client latency",value="Client latency is the time taken by the bot to respond to your command")
