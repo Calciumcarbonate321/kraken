@@ -14,7 +14,7 @@ class equip(commands.Cog):
             self.bi=shop(client)
 
         @commands.command()
-        async def equip(self,ctx,item=None):
+        async def equip(self,ctx,item=None):  
             users = await self.bi.get_shop_data()
             invt = users[str(ctx.author.id)]["Inventory"] #getting data from shop.json
             bag = users[str(ctx.author.id)]["bag"]

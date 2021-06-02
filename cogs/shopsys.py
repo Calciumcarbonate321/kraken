@@ -20,7 +20,7 @@ class shop(commands.Cog):
     def __init__(self,client):
         self.client=client
         self.bi=bank(client)
-
+    
     async def get_bank_data(self):
        with open("data/bank.json","r") as f:
           users = json.load(f)
@@ -183,7 +183,7 @@ class shop(commands.Cog):
       
 
 
-    @commands.command()
+    @commands.command(description="This command shows the shop of this bot's economy system")
     async def shop(self,ctx):
       await self.open_shopacc(ctx.author)
       em = discord.Embed(title = "__Shop__",url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",color = discord.Color.red())
@@ -203,7 +203,7 @@ class shop(commands.Cog):
 
 
 
-    @commands.command()
+    @commands.command(description="This command is used to buy stuff from the shop")
     async def buy(self,ctx,item,amount = 1):
       await self.open_account(ctx.author)
       await self.open_shopacc(ctx.author)
@@ -221,7 +221,7 @@ class shop(commands.Cog):
     
     
     
-    @commands.command()
+    @commands.command(description="This command is used to show your/mentioned person's inventory")
     async def inv(self,ctx,user : discord.User=None):
       if user==None:
         user=ctx.author
@@ -262,7 +262,7 @@ class shop(commands.Cog):
       await ctx.send(embed = em)
       
     
-    @commands.command()
+    @commands.command(description="This command is used to sell an item")
     async def sell(self,ctx,item,amount = 1):
       await self.open_account(ctx.author)
     
@@ -282,15 +282,9 @@ class shop(commands.Cog):
       await ctx.send(ctx.author.mention + f" >> *Successfully sold **{amount} {item}(s)**! Nice*")
 
 
-    @commands.command()
-    async def opacmem(self,ctx,member:discord.Member):
-      await self.open_shopacc(member)
-      await ctx.send("opened an account for yo homie")
 
 
-
-
-    @commands.command()
+    @commands.command(description="This command is used to gift an item to another user")
     async def gift(self,ctx,member:discord.Member = None, item_name = None, amount = None):
       await self.open_shopacc(member)
       for item in mainshop:

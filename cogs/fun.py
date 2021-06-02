@@ -2,12 +2,13 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Cog
 import aiohttp
+import re
 
 class Fun(commands.Cog):
     def __init__(self,client):
         self.client=client
 
-    @commands.command(aliases=['catpics','catpic','cat'])
+    @commands.command(aliases=['catpics','catpic','cat'],description="This command will show a random dog picture.")
     async def kitty(self,ctx):
         async with aiohttp.ClientSession() as session:
             request = await session.get('https://some-random-api.ml/img/cat') 
@@ -30,6 +31,28 @@ class Fun(commands.Cog):
             embed.set_footer(text=factjson['fact'])
             await ctx.send(embed=embed) 
 
+    @commands.command(description='For when plain text just is not enough')
+    async def emojify(self,ctx, *, text: str):
+
+        author = ctx.message.author
+        formatted=str()
+        for c in text:
+            if c.isalpha():
+                formatted+=c
+        if text == '':
+            await ctx.send('Remember to say what you want to convert!')
+        else:
+            emojified = ''.join(
+                '     ' if i == ' ' else ':regional_indicator_{}: '.format(i)
+                for i in formatted
+            )
+
+            if len(emojified) >= 1998:
+                await ctx.send('Your message in emojis exceeds 2000 characters!')
+            if len(emojified) <= 25:
+                await ctx.send('Your message could not be converted!')
+            else:
+                await ctx.send(''+emojified+'')
 
 def setup(client):
     client.add_cog(Fun(client))

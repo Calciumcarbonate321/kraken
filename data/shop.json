@@ -1,3 +1,53 @@
 {
-
+    "228876162078605312": {
+        "Inventory": [],
+        "bag": [
+            {
+                "itemid": "laptop",
+                "amount": 1,
+                "name": "Laptop",
+                "icon": ":computer:"
+            }
+        ]
+    },
+    "437163344525393920": {
+        "Inventory": [],
+        "bag": [
+            {
+                "itemid": "rifle",
+                "amount": 1,
+                "name": "Rifle",
+                "icon": ":gun:"
+            },
+            {
+                "itemid": "fishingrod",
+                "amount": 1,
+                "name": "Fishing Rod",
+                "icon": ":fishing_pole_and_fish:"
+            },
+            {
+                "itemid": "laptop",
+                "amount": 1,
+                "name": "Laptop",
+                "icon": ":computer:"
+            },
+            {
+                "itemid": "luckycharm",
+                "amount": 1,
+                "name": "Lucky Charm",
+                "icon": ":shamrock:"
+            }
+        ]
+    },
+    "250877226583588864": {
+        "Inventory": [],
+        "bag": [
+            {
+                "itemid": "rifle",
+                "amount": 1,
+                "name": "Rifle",
+                "icon": ":gun:"
+            }
+        ]
+    }
 }

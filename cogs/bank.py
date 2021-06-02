@@ -1,5 +1,5 @@
-from asyncio.windows_events import ERROR_CONNECTION_ABORTED
 import discord
+from discord import user
 from discord.ext import commands
 from discord.ext.commands import Cog
 import json
@@ -12,11 +12,22 @@ class bank(commands.Cog):
         with open('data/bank.json','r',encoding='utf8') as r:
             data=json.load(r)
             if user_id not in data:
-                data[user_id]={'bal' : 0,'wallet' : 0,'bank_limit' : 100000}
-                
+                data[user_id]={'bal' : 0,'wallet' : 0,'bank_limit' : 100000,'daily':0}                
         with open('data/bank.json','w',encoding='utf8') as r:
             r.write(json.dumps(data,indent=4))
             
+    async def get_daily_streak(self,user_id):
+        with open('data/bank.json','r',encoding='utf8') as r:
+            data=json.load(r)
+            return data[user_id]['daily']
+
+    async def update_daily_streak(self,user_id):
+        with open('data/bank.json','r',encoding='utf8') as r:
+            data=json.load(r)
+            data[user_id]['daily']+=1
+        with open('data/bank.json','w',encoding='utf8') as r:
+            r.write(json.dumps(data,indent=4))
+
     async def get_wallet(self,user_id):
         with open('data/bank.json','r',encoding='utf8') as r:
             data=json.load(r)
@@ -65,12 +76,12 @@ class bank(commands.Cog):
 
     @commands.command(aliases=['bal','balance'])
     async def bank_balance(self,ctx,user : discord.User=None):
-        if user==None:
+        if user is None:
             user=ctx.author
         userid=str(user.id)
         await self.create_account(userid)
 
-        wallet=await self.get_wallet(userid)        
+        wallet=await self.get_wallet(userid)
         bank_bal=await self.get_bal(userid)
         bank_limit=await self.get_bank_limit(userid)
 
@@ -84,11 +95,11 @@ class bank(commands.Cog):
     async def witho(self,ctx,amount :str=None):      
         userid=str(ctx.author.id)
         await self.create_account(userid)
-        if amount==None:
+        if amount is None:
             await ctx.send("What are you withdrawing you idiot")
             return
         amount=amount.lower()
-        if amount != "max" and amount != "all":
+        if amount not in ["max", "all"]:
             try:
                 amount=int(amount)
             except:
@@ -99,29 +110,28 @@ class bank(commands.Cog):
                     await ctx.send("The amount that you want to withdraw must be a whole number greater than 0.")
                     return              
 
-        if amount=="max" or amount=="all":
+        if amount in ["max", "all"]:
             amount=await self.get_bal(userid)
             amount=int(amount)
-        
+
         bankbal=int(await self.get_bal(userid))
         if amount>bankbal:
             await ctx.send(f"You don't even have that much money in your bank, you have only ⌬{bankbal}")
-            return
-        elif amount<=bankbal:
+        else:
             await self.add_money(userid,amount)
             await self.remove_money_bank(userid,amount)
             await ctx.send(f"You have withdrawn ⌬{amount}, your current wallet balance is ⌬{await self.get_wallet(userid)} and you have ⌬{await self.get_bal(userid)} in your bank")
-            return
+        return
 
     @commands.command(aliases=['dep','deposit'])
     async def depo(self,ctx,amount :str=None):      
         userid=str(ctx.author.id)
         await self.create_account(userid)
-        if amount==None:
+        if amount is None:
             await ctx.send("What are you depositing you idiot")
             return
         amount=amount.lower()
-        if amount != "max" and amount != "all":
+        if amount not in ["max", "all"]:
             try:
                 amount=int(amount)
             except:
@@ -132,7 +142,7 @@ class bank(commands.Cog):
                     await ctx.send("The amount that you want to deposit must be a whole number greater than 0.")
                     return              
 
-        if amount=="max" or amount=="all":
+        if amount in ["max", "all"]:
             amount=await self.get_wallet(userid)
             amount=int(amount)
 
@@ -142,21 +152,19 @@ class bank(commands.Cog):
 
         if amount>wallet:
             await ctx.send(f"You don't even have that much money in your wallet, you have only ⌬{wallet}")
-            return
         elif amount+bankbal>banklimit:
             new_amount=banklimit-bankbal
             await self.add_money_bank(userid,new_amount)
-            await self.remove_money(userid,new_amount)           
+            await self.remove_money(userid,new_amount)
             await ctx.send("Your bank is now full")
-            return
         elif bankbal==banklimit:
             await ctx.send("You have a full bank kiddo")
-            return
         else:
             await self.add_money_bank(userid,amount)
             await self.remove_money(userid,amount)
             await ctx.send(f"You have deposited ⌬{amount}, your current wallet balance is ⌬{await self.get_wallet(userid)} and you have ⌬{await self.get_bal(userid)} in your bank")
-            return
+
+        return
 
     @commands.command(aliases=['share','give'])
     async def givemoney(self,ctx,user: discord.User,amount : int=None):
@@ -169,7 +177,7 @@ class bank(commands.Cog):
             if authbal<amount:
                 await ctx.send("You don't even have that much money bruh")
                 return
-            if user==None or amount==None:
+            if user is None or amount is None:
                 await ctx.send("The correct format to do this command is `>give @user amount`")
                 return
 

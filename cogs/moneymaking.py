@@ -17,7 +17,7 @@ class money_making(commands.Cog):
         self.client=client
         self.bi=bank(client) #instance of the bank class from bank.py file
 
-    @commands.command(name="beg")
+    @commands.command(name="beg",description="This command is used to beg some bot currecncy.")
     @commands.cooldown(1,30,commands.BucketType.user)
     async def beg(self,ctx):
         userid=str(ctx.author.id)
@@ -39,10 +39,10 @@ class money_making(commands.Cog):
         if isinstance(error,commands.CommandOnCooldown):
             await ctx.send(f"This command is on a cooldown,try after {round(error.retry_after)}s")
 
-    @commands.command(aliases=['flip','coinflip'])
+    @commands.command(aliases=['flip','coinflip'],description="This is a coin-flip command, you can do a bet if you want.")
     async def coin(self,ctx,choice : str=None,bet : int=None):
         userid=str(ctx.author.id)
-        if choice==None:
+        if choice is None:
             await ctx.send("You have not entered a choice")
             return
         outcomes=['h','t']
@@ -70,14 +70,14 @@ class money_making(commands.Cog):
             await ctx.send(embed=embed)
             await self.bi.add_money(userid,(payout*bet))
 
-        elif outcome!=choice:
+        else:
             embed=discord.Embed(title="Oh no you have lost ",url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",color=discord.Colour.red())
             embed.add_field(name="Outcome:",value=f"{value}")
             embed.add_field(name="Payout",value="You lost the money that you bet")
             embed.set_footer(text="F you lost, try again later",icon_url=ctx.author.avatar_url)
             await ctx.send(embed=embed)
             await self.bi.remove_money(userid,bet)
-    @commands.command(aliases=['bet','rolls'])
+    @commands.command(aliases=['bet','rolls'],description="This is the bet command, you and the bot roll a dice once each, whoever has the highest number will win the game.")
     async def gamble(self,ctx,amount : int=None):
 
         user_roll=random.randint(1,12)
@@ -118,10 +118,10 @@ class money_making(commands.Cog):
             embed.set_footer(text="That was a dramatic tie",icon_url=ctx.author.avatar_url)
             await ctx.send(embed=embed)
 
-    @commands.command(name="rob")
+    @commands.command(name="rob",description="This command is used to rob an user of their bot currency, there is a chance that you will fail the robbery and will pay a fine to that user.")
     @commands.cooldown(1,30,type=BucketType.user)
     async def rob(self,ctx,user : discord.User=None):
-        if user==None:
+        if user is None:
             await ctx.send("Who are you robbing dum dum")
             return
         userid=str(user.id)
@@ -150,7 +150,29 @@ class money_making(commands.Cog):
         if isinstance(error,commands.CommandOnCooldown):
             await ctx.send(f"This command is on a cooldown,try after {round(error.retry_after)}s")
 
+    @commands.command(name="daily",description="This command can be used once every 24h, it gives you some coins and the number of coins depend on your daily streak.")
+    @commands.cooldown(1,86400,BucketType.user)
+    async def daily(self,ctx):
+        userid=str(ctx.author.id)
+        await self.bi.create_account(userid)
+        amount=10000
+        streak=await self.bi.get_daily_streak(userid)
+        bonus=streak*100
+        await self.bi.update_daily_streak(userid)
+        amount += bonus
+        await self.bi.add_money(userid,amount)
 
+        embed=discord.Embed(title="Here are your daily coins", url="https://www.youtube.com/watch?v=dQw4w9WgXcQ", description=f"**⌬{amount}** was placed in your wallet")
+        embed.add_field(name=f"You can get atleast ⌬10000 by using this command once every 24 hours", value="The amount that you get depends on your daily streak", inline=False)
+        embed.set_footer(text=f"Current daily streak={await self.bi.get_daily_streak(userid)}")
+        await ctx.send(embed=embed)
+
+    @daily.error
+    async def daily_handler(self,ctx,error):
+        if isinstance(error,commands.CommandOnCooldown):
+            await ctx.send(f"This command is on a cooldown,try after {round(error.retry_after)}s")
+
+    
 
 
 def setup(client):

@@ -33,7 +33,7 @@ class leveling(commands.Cog):
             with open('data/level.json','w',encoding='utf8') as r:
                 r.write(json.dumps(data,indent=4))
         
-    @commands.command(aliases=['lvl'])
+    @commands.command(aliases=['lvl'],description="This command shows your level in the bot's chat leveling system.")
     async def level(self,ctx,user : discord.User=None):
         guildid=str(ctx.guild.id)
         if user==None:
@@ -63,7 +63,7 @@ class leveling(commands.Cog):
         embed.set_footer(text="Those are some wild numbers")
         await ctx.send(embed=embed)
 
-    @commands.command(name="setlvl")
+    @commands.command(name="setlvl",description="This command is used to modify a user's level.")
     @commands.has_permissions(manage_roles=True)
     async def setlvl(self,ctx,user : discord.User=None,newlvl : int=None):
        

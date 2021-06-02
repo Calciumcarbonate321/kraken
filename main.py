@@ -4,6 +4,9 @@ from discord import Colour
 from discord.ext.commands.core import has_guild_permissions, has_permissions, is_owner
 import json
 
+from pretty_help import PrettyHelp,DefaultMenu
+
+
 intents = discord.Intents.default()
 intents.members = True
 
@@ -30,12 +33,17 @@ def get_prefix(client, message):
 
 client=commands.Bot(command_prefix=(get_prefix),case_insensitive=True)
 
+menu=DefaultMenu(page_left="⬅️", page_right="➡️", remove="⏹️", active_time=50)
+
+client.help_command=PrettyHelp(menu=menu)
+
+
 
 @client.event
 async def on_ready():
     print("ready")
 
-@client.command(name="ping")
+@client.command(name="ping",description="This command returns the client latency.")
 async def ping(ctx):
     embed=discord.Embed(name="Client latency",descrption="This command shows the latency of the bot.",color=discord.Colour.random())
     embed.add_field(name="Client latency",value="Client latency is the time taken by the bot to respond to your command")
@@ -49,13 +57,14 @@ def load_cogs():
             "cogs.moneymaking",
             "cogs.level",
             "cogs.shopsys",
-            "cogs.help",
-            "cogs.fun"  
+            "cogs.fun"  ,
+            "cogs.aichatbot",
+
     ]
     for i in cogs:
         client.load_extension(i)
 
-@client.command()
+@client.command(description="This command is used to load a cog.")
 @is_owner()
 async def load(ctx,ext):
     try:
@@ -64,7 +73,7 @@ async def load(ctx,ext):
     except:
         await ctx.send(f"{ext} is not a valid cog name.")
 
-@client.command()
+@client.command(description="This command is used to unload a cog")
 @is_owner()
 async def unload(ctx,ext):
     try:
@@ -73,7 +82,7 @@ async def unload(ctx,ext):
     except:
         await ctx.send(f"{ext} is not a valid cog name.")
 
-@client.command(aliases=['re'])
+@client.command(aliases=['re'],description="This command is used to reload a cog.")
 @is_owner()
 async def reload(ctx,ext):
     try:
@@ -83,7 +92,7 @@ async def reload(ctx,ext):
     except:
         await ctx.send(f"{ext} is not a valid cog name.")  
 
-@client.command(aliases=['setprefix','changeprefix'])      
+@client.command(aliases=['setprefix','changeprefix'],description="This command is used to change the server's bot prefix")      
 @has_permissions(administrator=True)
 async def prefix(ctx,prefix : str):
     with open('data/config.json','r',encoding='utf8') as r:
@@ -99,6 +108,7 @@ async def on_message(message):
     if client.user.mentioned_in(message):
         await message.channel.send(f"My prefix in this server is {await client.get_prefix(message)}")
     await client.process_commands(message)
+
 
 
 
