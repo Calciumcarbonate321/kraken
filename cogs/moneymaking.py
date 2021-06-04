@@ -7,6 +7,7 @@ from discord.ext.commands import Cog
 import random
 import json
 
+
 from discord.ext.commands.cooldowns import BucketType
 from cogs.bank import bank
 from cogs.shopsys import shop
@@ -46,11 +47,9 @@ class money_making(commands.Cog):
             extra = int(extra)
             tpo = (payout - extra)
             tpo = int(tpo)
-            print(tpo)
             embed=discord.Embed(title="Begging successful",url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",color=discord.Colour.red())
             embed.add_field(name="Nice job",value= f"You earned ⌬`{tpo}`by begging, and you get an additional ⌬`{extra}` since you have a *Lucky Charm*")
             embed.set_footer(text="Good job mate",icon_url=ctx.author.avatar_url)
-            print("works lmao")
             await self.bi.add_money(userid,payout)
             await ctx.send(embed=embed)
         else:

@@ -2,7 +2,6 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Cog
 import aiohttp
-import re
 
 class Fun(commands.Cog):
     def __init__(self,client):
@@ -53,6 +52,7 @@ class Fun(commands.Cog):
                 await ctx.send('Your message could not be converted!')
             else:
                 await ctx.send(''+emojified+'')
+              
 
 def setup(client):
     client.add_cog(Fun(client))

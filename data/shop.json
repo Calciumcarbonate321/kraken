@@ -11,7 +11,14 @@
         ]
     },
     "437163344525393920": {
-        "Inventory": [],
+        "Inventory": [
+            {
+                "equipped": "luckycharm",
+                "eqname": "Lucky Charm",
+                "eqamt": 1,
+                "eqicon": ":shamrock:"
+            }
+        ],
         "bag": [
             {
                 "itemid": "rifle",
@@ -33,7 +40,7 @@
             },
             {
                 "itemid": "luckycharm",
-                "amount": 1,
+                "amount": 0,
                 "name": "Lucky Charm",
                 "icon": ":shamrock:"
             }

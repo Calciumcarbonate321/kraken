@@ -58,7 +58,7 @@ def load_cogs():
             "cogs.level",
             "cogs.shopsys",
             "cogs.fun"  ,
-            "cogs.aichatbot",
+            "equipsys"
 
     ]
     for i in cogs:
