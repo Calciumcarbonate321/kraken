@@ -58,8 +58,8 @@ def load_cogs():
             "cogs.level",
             "cogs.shopsys",
             "cogs.fun"  ,
-            "equipsys"
-
+            "cogs.equipsys",
+            "cogs.itemusage"
     ]
     for i in cogs:
         client.load_extension(i)

@@ -1,15 +1,4 @@
 {
-    "228876162078605312": {
-        "Inventory": [],
-        "bag": [
-            {
-                "itemid": "laptop",
-                "amount": 1,
-                "name": "Laptop",
-                "icon": ":computer:"
-            }
-        ]
-    },
     "437163344525393920": {
         "Inventory": [
             {
@@ -28,7 +17,7 @@
             },
             {
                 "itemid": "fishingrod",
-                "amount": 1,
+                "amount": 2,
                 "name": "Fishing Rod",
                 "icon": ":fishing_pole_and_fish:"
             },
@@ -46,8 +35,19 @@
             }
         ]
     },
-    "250877226583588864": {
+    "843071820878184458": {
         "Inventory": [],
+        "bag": []
+    },
+    "228876162078605312": {
+        "Inventory": [
+            {
+                "equipped": "Nothing",
+                "eqname": "Noname",
+                "eqamt": 0,
+                "eqicon": "None"
+            }
+        ],
         "bag": [
             {
                 "itemid": "rifle",
