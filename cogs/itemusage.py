@@ -34,10 +34,19 @@ class itemUsage(commands.Cog):
     async def fish(self,ctx):
         userid=str(ctx.author.id)
         if await self.checkitem(userid,"fishingrod"):
-            payout=random.randint(100,500)
+            payout=random.randint(200,700)
             await ctx.send(f"You went to the lake for fishing,sold all the fish that you caught and you got ⌬{payout}")
         else:
             await ctx.send("You don't even have a fishing rod. Buy one from the shop.")
+
+    @commands.command(aliases=["pm","postmeme"])
+    async def postm(self,ctx):
+        userid=str(ctx.author.id)
+        if await self.checkitem(userid,"laptop"):
+            payout=random.randint(50,200)
+            await ctx.send(f"You posted some nice memes on reddit and earned ⌬{payout}")
+        else:
+            await ctx.send("You don't even have a laptop.Buy one from the shop.")
 
 
 
