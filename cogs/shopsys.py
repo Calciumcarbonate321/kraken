@@ -368,17 +368,5 @@ class shop(commands.Cog):
       await ctx.send (ctx.author.mention + f" >> Succesfully gifted **{amount} {item_name}(s)** to " + member.mention + "!")
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 def setup(client):
     client.add_cog(shop(client))

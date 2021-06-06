@@ -63,44 +63,6 @@ class money_making(commands.Cog):
         if isinstance(error,commands.CommandOnCooldown):
             await ctx.send(f"This command is on a cooldown,try after {round(error.retry_after)}s")
 
-    @commands.command(aliases=['flip','coinflip'],description="This is a coin-flip command, you can do a bet if you want.")
-    async def coin(self,ctx,choice : str=None,bet : int=None):
-        userid=str(ctx.author.id)
-        if choice is None:
-            await ctx.send("You have not entered a choice")
-            return
-        outcomes=['h','t']
-        choice=choice[0].lower()
-        outcome=random.choice(outcomes)
-        bet=int(bet)
-        wallet=await self.bi.get_wallet(userid)
-        if wallet<bet:
-            await ctx.send("You don't even have that much money bruh")
-            return
-        if bet<0:
-            await ctx.send("The number must be greater than 0")
-            return
-
-        if outcome=='h':
-            value="Heads"
-        elif outcome=="t":
-            value="Tails"
-        payout=random.randint(1,3)
-        if outcome==choice:
-            embed=discord.Embed(title="Yay! you have won ",url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",color=discord.Colour.green())
-            embed.add_field(name="Outcome:",value=f"{value}")
-            embed.add_field(name="Payout",value=f"{payout}x your bet" )
-            embed.set_footer(text="Congrats on winning",icon_url=ctx.author.avatar_url)
-            await ctx.send(embed=embed)
-            await self.bi.add_money(userid,(payout*bet))
-
-        else:
-            embed=discord.Embed(title="Oh no you have lost ",url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",color=discord.Colour.red())
-            embed.add_field(name="Outcome:",value=f"{value}")
-            embed.add_field(name="Payout",value="You lost the money that you bet")
-            embed.set_footer(text="F you lost, try again later",icon_url=ctx.author.avatar_url)
-            await ctx.send(embed=embed)
-            await self.bi.remove_money(userid,bet)
     @commands.command(aliases=['bet','rolls'],description="This is the bet command, you and the bot roll a dice once each, whoever has the highest number will win the game.")
     async def gamble(self,ctx,amount : int=None):
 
@@ -169,11 +131,6 @@ class money_making(commands.Cog):
             await self.bi.remove_money(userid,amountgained)
             await self.bi.add_money(authid,amountgained)
 
-    @rob.error
-    async def rob_handler(self,ctx,error):
-        if isinstance(error,commands.CommandOnCooldown):
-            await ctx.send(f"This command is on a cooldown,try after {round(error.retry_after)}s")
-
     @commands.command(name="daily",description="This command can be used once every 24h, it gives you some coins and the number of coins depend on your daily streak.")
     @commands.cooldown(1,86400,BucketType.user)
     async def daily(self,ctx):
@@ -190,11 +147,6 @@ class money_making(commands.Cog):
         embed.add_field(name=f"You can get atleast ⌬10000 by using this command once every 24 hours", value="The amount that you get depends on your daily streak", inline=False)
         embed.set_footer(text=f"Current daily streak={await self.bi.get_daily_streak(userid)}")
         await ctx.send(embed=embed)
-
-    @daily.error
-    async def daily_handler(self,ctx,error):
-        if isinstance(error,commands.CommandOnCooldown):
-            await ctx.send(f"This command is on a cooldown,try after {round(error.retry_after)}s")
 
     
 

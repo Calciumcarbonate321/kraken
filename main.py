@@ -59,7 +59,9 @@ def load_cogs():
             "cogs.shopsys",
             "cogs.fun"  ,
             "cogs.equipsys",
-            "cogs.itemusage"
+            "cogs.itemusage",
+            "cogs.errors",
+            "cogs.general"
     ]
     for i in cogs:
         client.load_extension(i)
@@ -105,8 +107,9 @@ async def prefix(ctx,prefix : str):
 
 @client.event
 async def on_message(message):
-    if client.user.mentioned_in(message):
-        await message.channel.send(f"My prefix in this server is {await client.get_prefix(message)}")
+       
+    if message.content=="<@!843071820878184458>":
+        await message.channel.send(f"My prefix in this server is {await client.get_prefix(message)}")       
     await client.process_commands(message)
 
 
