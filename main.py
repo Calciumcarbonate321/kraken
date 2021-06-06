@@ -118,4 +118,4 @@ async def on_message(message):
 
 load_cogs()       
 
-client.run('ODQzMDcxODIwODc4MTg0NDU4.YJ-h0Q.lz1Lfb49ulr3-SBfSPs__SEaLBc')    
+client.run('token')    
