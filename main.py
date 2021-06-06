@@ -61,7 +61,8 @@ def load_cogs():
             "cogs.equipsys",
             "cogs.itemusage",
             "cogs.errors",
-            "cogs.general"
+            "cogs.general",
+            "cogs.math"
     ]
     for i in cogs:
         client.load_extension(i)
