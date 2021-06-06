@@ -20,6 +20,5 @@ class Errors(commands.Cog):
             message = "Something about your input was wrong, please check your input and try again!"        
             await ctx.send(message,delete_after=30)
 
-
 def setup(client):
     client.add_cog(Errors(client))
