@@ -118,5 +118,5 @@ async def on_message(message):
 
 load_cogs()       
 
-client.run('ODQzMDcxODIwODc4MTg0NDU4.YJ-h0Q._QGhAmu3o86uFJFTvJtqJgdU77E')    
+client.run('e')    
     
