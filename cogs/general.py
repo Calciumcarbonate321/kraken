@@ -4,6 +4,7 @@ from discord.ext.commands import Cog
 from random import choice
 import time
 from datetime import datetime,timedelta
+import asyncio
 
 class General(commands.Cog):
     def __init__(self,client):
@@ -69,6 +70,29 @@ class General(commands.Cog):
             tmp = str(timedelta(seconds=tmp))
             await ctx.send(author.mention + (" Stopwatch stopped! Time: **{seconds}**").format(seconds=tmp))
             self.stopwatches.pop(str(author.id), None)
+
+    @commands.command()
+    async def timer(self, ctx, seconds):
+        try:
+            secondint = int(seconds)
+            if secondint > 600:
+                await ctx.send("I dont think im allowed to do go above 600 seconds.")
+                return
+            if secondint <= 0:
+                await ctx.send("I dont think im allowed to do negatives")
+                return
+            message = await ctx.send("Timer: {seconds}")
+            while True:
+                secondint -= 1
+                if secondint == 0:
+                    await message.edit(content="Ended!")
+                    break
+                await message.edit(content=f"Timer: {secondint}")
+                await asyncio.sleep(1)
+            await ctx.send(f"{ctx.author.mention} Your timer Has ended!")
+        except ValueError:
+            await ctx.send("Must be a number!")
+            return
 
 
 def setup(client):
