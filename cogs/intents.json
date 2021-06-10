@@ -1,0 +1,41 @@
+{
+    "intents":[
+            {
+                "tag":"greeting",
+                "patterns":["Hi","Hello","Is anyone here","Good morning","Good afternoon","Good evening"],
+                "responses":["Hello","Hi my friend","Hello there my dude"]
+                
+            },
+            {
+                "tag":"goodbye",
+                "patterns":["Bye","Buh bye","Cya later","Until next time","It was a pleasure chatting with you"],
+                "responses":["Bye","See you!","Come again soon","Have a nice day!"]
+            },
+            {
+                "tag":"thanks",
+                "patterns":["Thank you","That was helpful","That's helpful","Thank you for helping me"],
+                "responses":["Happy to help!","Any time!","My pleasure"]
+            },
+            {
+                "tag":"howareyou",
+                "patterns":["How are you","How are you doing","Is everything fine","How's it going on","How are you feeling"],
+                "responses":["Everything is fine, thanks for asking","I am feeling great","I'm fine","Better now that you asked","I'm feeling like a good luck magnet today, everything is coming my way","Just like you","Better than you"]               
+            },
+
+            {
+                "tag":"joemama",
+                "patterns":["Who is joe","But who is joe","Who the hell is joe"],
+                "responses":["JOE MAMA!! GET REKT"]
+            },
+            {
+                "tag":"jokes",
+                "patterns":["I want to hear a joke","I am feeling bored","Can you tell a joke"],
+                "responses":["Where do hamburgers go to dance? The meat-ball.","I have the heart of a lion... and a lifetime ban from the San Diego Zoo.","What is worse then finding a worm in your Apple? Finding half a worm in your Apple."]
+            },
+            {
+                "tag":"sad",
+                "patterns":["I am feeling sad today","I don't even feel like doing anything","I feel sad","I am lonely"],
+                "responses":["Come on my friend, let us take over the world"]
+            }  
+    ]
+}

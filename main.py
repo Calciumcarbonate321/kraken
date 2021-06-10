@@ -1,8 +1,10 @@
 import discord
+from discord.activity import Game
 from discord.ext import commands
 from discord import Colour
 from discord.ext.commands.core import has_guild_permissions, has_permissions, is_owner
 import json
+from datetime import datetime
 
 from pretty_help import PrettyHelp,DefaultMenu
 
@@ -31,11 +33,12 @@ def get_prefix(client, message):
     except: 
         return '>'
 
-client=commands.Bot(command_prefix=(get_prefix),case_insensitive=True)
+client=commands.Bot(command_prefix=(get_prefix),case_insensitive=True,intents=intents)
 
 menu=DefaultMenu(page_left="⬅️", page_right="➡️", remove="⏹️", active_time=50)
 
 client.help_command=PrettyHelp(menu=menu)
+
 
 
 
@@ -62,7 +65,7 @@ def load_cogs():
             "cogs.itemusage",
             "cogs.errors",
             "cogs.general",
-            "cogs.math"
+            "cogs.math",
     ]
     for i in cogs:
         client.load_extension(i)
@@ -115,8 +118,9 @@ async def on_message(message):
 
 
 
-
 load_cogs()       
+
+starttime=datetime.utcnow()
 
 client.run('e')    
     

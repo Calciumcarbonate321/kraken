@@ -3,6 +3,8 @@ from discord.ext import commands
 from discord.ext.commands import Cog
 import aiohttp
 
+from cogs.chat import getResponse
+
 class Fun(commands.Cog):
     def __init__(self,client):
         self.client=client
@@ -52,7 +54,11 @@ class Fun(commands.Cog):
                 await ctx.send('Your message could not be converted!')
             else:
                 await ctx.send(''+emojified+'')
-              
+    
+    @commands.command(name="ai")
+    async def get_ai(self,ctx,*,sentence):
+        await ctx.send(getResponse(sentence))
+
 
 def setup(client):
     client.add_cog(Fun(client))

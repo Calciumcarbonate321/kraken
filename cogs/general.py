@@ -1,10 +1,14 @@
 import discord
+from discord import channel
 from discord.ext import commands
 from discord.ext.commands import Cog
 from random import choice
 import time
-from datetime import datetime,timedelta
+from datetime import date, datetime,timedelta
 import asyncio
+import contextlib
+import io
+from main import *
 
 class General(commands.Cog):
     def __init__(self,client):
@@ -93,6 +97,19 @@ class General(commands.Cog):
         except ValueError:
             await ctx.send("Must be a number!")
             return
+
+    def clean_code(code:str):
+        if code.startswith("```") and code.endswith("```"):
+            return "\n".join(code.split("\n")[1:][:-3])
+
+    @commands.command(name="uptime")
+    async def uptime(self,ctx):
+        now=datetime.utcnow()
+        elapsed = now - starttime
+        seconds = elapsed.seconds
+        minutes, seconds = divmod(seconds, 60)
+        hours, minutes = divmod(minutes, 60)
+        await ctx.send("Bot has been running for {}d {}h {}m {}s".format(elapsed.days, hours, minutes, seconds))
 
 
 def setup(client):

@@ -2,7 +2,6 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Cog
 
-import sympy as sy
 import math
 
 class Math(commands.Cog):
