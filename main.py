@@ -10,6 +10,7 @@ from pretty_help import PrettyHelp,DefaultMenu
 intents = discord.Intents.default()
 intents.members = True
 
+
 def get_prefix(client, message):
     try:
         with open('data/config.json', 'r',encoding='utf8') as r:

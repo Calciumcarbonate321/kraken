@@ -5,6 +5,8 @@ from discord.ext.commands import Cog
 import json
 
 class bank(commands.Cog):
+    '''This cog has the bank commands of the bot economy'''
+
     def __init__(self,client):
         self.client=client
 

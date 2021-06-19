@@ -2,10 +2,35 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Cog
 import aiohttp
+from random import choice
 
 class Fun(commands.Cog):
+    '''This cog has some pretty fun commands in it'''
+
     def __init__(self,client):
         self.client=client
+        self.ball = [
+        ("As I see it, yes"),
+        ("It is certain"),
+        ("It is decidedly so"),
+        ("Most likely"),
+        ("Outlook good"),
+        ("Signs point to yes"),
+        ("Without a doubt"),
+        ("Yes"),
+        ("Yes – definitely"),
+        ("You may rely on it"),
+        ("Reply hazy, try again"),
+        ("Ask again later"),
+        ("Better not tell you now"),
+        ("Cannot predict now"),
+        ("Concentrate and ask again"),
+        ("Don't count on it"),
+        ("My reply is no"),
+        ("My sources say no"),
+        ("Outlook not so good"),
+        ("Very doubtful"),
+    ]
 
     @commands.command(aliases=['catpics','catpic','cat'],description="This command will show a random cat picture.")
     async def kitty(self,ctx):
@@ -52,6 +77,51 @@ class Fun(commands.Cog):
                 await ctx.send('Your message could not be converted!')
             else:
                 await ctx.send(''+emojified+'')
+
+    @commands.command()
+    async def flip(self, ctx, user: discord.Member = None):
+        if user is not None:
+            msg = ""
+            if user.id == ctx.bot.user.id:
+                user = ctx.author
+                msg = "Nice try. You think this is funny?\n How about *this* instead:\n\n"
+            char = "abcdefghijklmnopqrstuvwxyz"
+            tran = "ɐqɔpǝɟƃɥᴉɾʞlɯuodbɹsʇnʌʍxʎz"
+            table = str.maketrans(char, tran)
+            name = user.display_name.translate(table)
+            char = char.upper()
+            tran = "∀qƆpƎℲפHIſʞ˥WNOԀQᴚS┴∩ΛMX⅄Z"
+            table = str.maketrans(char, tran)
+            name = name.translate(table)
+            await ctx.send(msg + "(╯°□°）╯︵ " + name[::-1])
+        else:
+            await ctx.send(("*flips a coin and... ") + choice([("HEADS!*"),("TAILS!*")]))
+
+    @commands.command(name="8ball")
+    async def _8ball(self, ctx, *, question: str):
+        if question.endswith("?") and question != "?":
+            await ctx.send("`" + (choice(self.ball)) + "`")
+        else:
+            await ctx.send("That doesn't look like a question.")
+
+    @commands.command()
+    async def flip(self, ctx, user: discord.Member = None):
+        if user is not None:
+            msg = ""
+            if user.id == ctx.bot.user.id:
+                user = ctx.author
+                msg = "Nice try. You think this is funny?\n How about *this* instead:\n\n"
+            char = "abcdefghijklmnopqrstuvwxyz"
+            tran = "ɐqɔpǝɟƃɥᴉɾʞlɯuodbɹsʇnʌʍxʎz"
+            table = str.maketrans(char, tran)
+            name = user.display_name.translate(table)
+            char = char.upper()
+            tran = "∀qƆpƎℲפHIſʞ˥WNOԀQᴚS┴∩ΛMX⅄Z"
+            table = str.maketrans(char, tran)
+            name = name.translate(table)
+            await ctx.send(msg + "(╯°□°）╯︵ " + name[::-1])
+        else:
+            await ctx.send(("*flips a coin and... ") + choice([("HEADS!*"),("TAILS!*")]))
               
 
 def setup(client):

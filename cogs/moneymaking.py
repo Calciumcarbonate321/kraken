@@ -15,6 +15,8 @@ from cogs.shopsys import shop
 from discord.ext.commands.errors import NoEntryPointError
 
 class money_making(commands.Cog):
+    '''This is the cog where all bot curreny earning commands are there'''
+
     def __init__(self,client):
         self.client=client
         self.bi=bank(client) #instance of the bank class from bank.py file

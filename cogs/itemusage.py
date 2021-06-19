@@ -7,6 +7,8 @@ from cogs.shopsys import shop
 from cogs.bank import bank
 
 class itemUsage(commands.Cog):
+    '''This cog houses the item usage commands of the bot economy'''
+
     def __init__(self,client):
         self.client=client
 

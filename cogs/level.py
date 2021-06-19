@@ -1,13 +1,11 @@
 import discord
-from discord import guild
-from discord import colour
-from discord import message
-from discord.colour import Color
 from discord.ext import commands
 from discord.ext.commands import Cog
 import json
 
 class leveling(commands.Cog):
+    '''This cog manages the chat exp system of the bot'''
+
     def __init__(self,client):
         self.client=client
 
@@ -93,9 +91,8 @@ class leveling(commands.Cog):
             
 
         except:
-            prefix=await self.client.get_prefix(message)
             embed=discord.Embed(title="Error on running the command", description="I think you haven't entered all the arguements", color=0xfb0404)
-            embed.add_field(name="Correct format", value=f"{prefix} setlvl @user 100 ", inline=True)
+            embed.add_field(name="Correct format", value=f"prefix setlvl @user 100 ", inline=True)
             embed.set_footer(text="Try using the command again with the correct format")
             await ctx.send(embed=embed)
             return
