@@ -3,6 +3,7 @@ from discord.ext import commands
 from discord import Colour
 from discord.ext.commands.core import has_guild_permissions, has_permissions, is_owner
 import json
+from datetime import datetime
 
 from discord.ext.commands import HelpCommand
 
@@ -121,5 +122,7 @@ async def on_message(message):
 
 
 load_cogs()       
+
+starttime=datetime.utcnow()
 
 client.run('token')    
