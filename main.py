@@ -9,9 +9,11 @@ from discord.ext.commands import HelpCommand
 
 from pretty_help import PrettyHelp,DefaultMenu
 
-
 intents = discord.Intents.default()
 intents.members = True
+
+with open('token.txt','r') as r:
+    token=str(r.read())
 
 
 def get_prefix(client, message):
@@ -48,7 +50,7 @@ client.help_command=PrettyHelp(menu=menu)
 async def on_ready():
     print("ready")
 
-@client.command(name="ping",brief="This command returns the client latency.",description="This command returns the client latency.")
+@client.command(name="ping",brief="This command returns the bot's latency.",description="This command returns the client latency.")
 async def ping(ctx):
     embed=discord.Embed(name="Client latency",descrption="This command shows the latency of the bot.",color=discord.Colour.random())
     embed.add_field(name="Client latency",value="Client latency is the time taken by the bot to respond to your command")
@@ -71,6 +73,9 @@ def load_cogs():
     ]
     for i in cogs:
         client.load_extension(i)
+
+        
+    client.load_extension("jishaku")
 
 @client.command(brief="This command is used to load a cog.", description="This command is used to load a cog.")
 @is_owner()
@@ -114,7 +119,7 @@ async def prefix(ctx,prefix : str):
 @client.event
 async def on_message(message):
        
-    if message.content in ["<@!843071820878184458>","<@!843071820878184458> help"]:
+    if message.content in ["<@!851337698853650442>","<@!851337698853650442> help"]:
         await message.channel.send(f"My prefix in this server is {await client.get_prefix(message)}")   
     await client.process_commands(message)
 
@@ -125,4 +130,4 @@ load_cogs()
 
 starttime=datetime.utcnow()
 
-client.run('token')    
+client.run(token)    
