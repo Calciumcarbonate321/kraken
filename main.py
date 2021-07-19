@@ -1,6 +1,5 @@
 import discord
 from discord.ext import commands
-from discord import Colour
 from discord.ext.commands.core import has_guild_permissions, has_permissions, is_owner
 import json
 from datetime import datetime
@@ -8,9 +7,6 @@ from datetime import datetime
 from discord.ext.commands import HelpCommand
 
 from pretty_help import PrettyHelp,DefaultMenu
-
-intents = discord.Intents.default()
-intents.members = True
 
 with open('token.txt','r') as r:
     token=str(r.read())
@@ -74,9 +70,7 @@ def load_cogs():
     for i in cogs:
         client.load_extension(i)
 
-        
-    client.load_extension("jishaku")
-
+    
 @client.command(brief="This command is used to load a cog.", description="This command is used to load a cog.")
 @is_owner()
 async def load(ctx,ext):
@@ -117,8 +111,7 @@ async def prefix(ctx,prefix : str):
         await ctx.send(f"Success, new prefix is {prefix}")
 
 @client.event
-async def on_message(message):
-       
+async def on_message(message):     
     if message.content in ["<@!851337698853650442>","<@!851337698853650442> help"]:
         await message.channel.send(f"My prefix in this server is {await client.get_prefix(message)}")   
     await client.process_commands(message)

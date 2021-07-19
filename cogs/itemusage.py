@@ -4,7 +4,6 @@ from discord.ext.commands import Cog
 import random
 
 from cogs.shopsys import shop
-from cogs.bank import bank
 
 class itemUsage(commands.Cog):
     '''This cog houses the item usage commands of the bot economy'''

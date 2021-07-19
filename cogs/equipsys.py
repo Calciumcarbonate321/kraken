@@ -111,7 +111,7 @@ class equip(commands.Cog):
                     for item in invt:
                         item["equipped"] = item["equipped"].replace(eqp, "Nothing") 
                         item["eqname"] = item["eqname"].replace(eqp1, "Noname")     
-                        item["eqicon"] = item["eqicon"].replace(eqp3, "None")       #
+                        item["eqicon"] = item["eqicon"].replace(eqp3, "None")       
                         item["eqamt"] = 0                                          
 
                     t = 1

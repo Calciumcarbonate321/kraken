@@ -12,7 +12,6 @@ from discord.ext.commands.cooldowns import BucketType
 from cogs.bank import bank
 from cogs.shopsys import shop
 
-from discord.ext.commands.errors import NoEntryPointError
 
 class money_making(commands.Cog):
     '''This is the cog where all bot curreny earning commands are there'''
@@ -60,10 +59,7 @@ class money_making(commands.Cog):
             embed.set_footer(text="Good job mate",icon_url=ctx.author.avatar_url)
             await self.bi.add_money(userid,payout)
             await ctx.send(embed=embed)
-    @beg.error
-    async def beg_handler(self,ctx,error):
-        if isinstance(error,commands.CommandOnCooldown):
-            await ctx.send(f"This command is on a cooldown,try after {round(error.retry_after)}s")
+
 
     @commands.command(aliases=['bet','rolls'],description="This is the bet command, you and the bot roll a dice once each, whoever has the highest number will win the game.")
     async def gamble(self,ctx,amount : int=None):

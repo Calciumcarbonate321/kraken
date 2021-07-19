@@ -78,24 +78,6 @@ class Fun(commands.Cog):
             else:
                 await ctx.send(''+emojified+'')
 
-    @commands.command()
-    async def flip(self, ctx, user: discord.Member = None):
-        if user is not None:
-            msg = ""
-            if user.id == ctx.bot.user.id:
-                user = ctx.author
-                msg = "Nice try. You think this is funny?\n How about *this* instead:\n\n"
-            char = "abcdefghijklmnopqrstuvwxyz"
-            tran = "ɐqɔpǝɟƃɥᴉɾʞlɯuodbɹsʇnʌʍxʎz"
-            table = str.maketrans(char, tran)
-            name = user.display_name.translate(table)
-            char = char.upper()
-            tran = "∀qƆpƎℲפHIſʞ˥WNOԀQᴚS┴∩ΛMX⅄Z"
-            table = str.maketrans(char, tran)
-            name = name.translate(table)
-            await ctx.send(msg + "(╯°□°）╯︵ " + name[::-1])
-        else:
-            await ctx.send(("*flips a coin and... ") + choice([("HEADS!*"),("TAILS!*")]))
 
     @commands.command(name="8ball")
     async def _8ball(self, ctx, *, question: str):
@@ -103,25 +85,6 @@ class Fun(commands.Cog):
             await ctx.send("`" + (choice(self.ball)) + "`")
         else:
             await ctx.send("That doesn't look like a question.")
-
-    @commands.command()
-    async def flip(self, ctx, user: discord.Member = None):
-        if user is not None:
-            msg = ""
-            if user.id == ctx.bot.user.id:
-                user = ctx.author
-                msg = "Nice try. You think this is funny?\n How about *this* instead:\n\n"
-            char = "abcdefghijklmnopqrstuvwxyz"
-            tran = "ɐqɔpǝɟƃɥᴉɾʞlɯuodbɹsʇnʌʍxʎz"
-            table = str.maketrans(char, tran)
-            name = user.display_name.translate(table)
-            char = char.upper()
-            tran = "∀qƆpƎℲפHIſʞ˥WNOԀQᴚS┴∩ΛMX⅄Z"
-            table = str.maketrans(char, tran)
-            name = name.translate(table)
-            await ctx.send(msg + "(╯°□°）╯︵ " + name[::-1])
-        else:
-            await ctx.send(("*flips a coin and... ") + choice([("HEADS!*"),("TAILS!*")]))
               
 
 def setup(client):
