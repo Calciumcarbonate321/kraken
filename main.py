@@ -69,6 +69,7 @@ def load_cogs():
     ]
     for i in cogs:
         client.load_extension(i)
+    client.load_extension("jishaku")
 
     
 @client.command(brief="This command is used to load a cog.", description="This command is used to load a cog.")
