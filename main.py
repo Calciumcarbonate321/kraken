@@ -1,8 +1,10 @@
+import asyncio
 import discord
 from discord.ext import commands
 from discord.ext.commands.core import has_guild_permissions, has_permissions, is_owner
 import json
 from datetime import datetime
+import aiosqlite
 
 from discord.ext.commands import HelpCommand
 
@@ -35,12 +37,18 @@ def get_prefix(client, message):
 
 client=commands.Bot(command_prefix=(get_prefix),case_insensitive=True)
 
+
 menu=DefaultMenu(page_left="⬅️", page_right="➡️", remove="⏹️", active_time=50)
 
 
 client.help_command=PrettyHelp(menu=menu)
 
+async def startup():
+    await client.wait_until_ready()
+    client.db=await aiosqlite.connect("./data/bank.db")
+    await client.db.execute("CREATE TABLE IF NOT EXISTS bankdata (userid int,wallet int,bankbal int)")
 
+        
 
 @client.event
 async def on_ready():
@@ -118,10 +126,9 @@ async def on_message(message):
     await client.process_commands(message)
 
 
-
-
-load_cogs()       
+load_cogs()
+client.loop.create_task(startup())
 
 starttime=datetime.utcnow()
 
-client.run(token)    
+client.run(token)

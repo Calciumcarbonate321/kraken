@@ -19,6 +19,8 @@ class Errors(commands.Cog):
         elif isinstance(error, commands.UserInputError):
             message = "Something about your input was wrong, please check your input and try again!"        
             await ctx.send(message,delete_after=30)
+        else:
+            await ctx.send(error)
 
 def setup(client):
     client.add_cog(Errors(client))

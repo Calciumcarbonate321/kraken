@@ -24,7 +24,7 @@ class money_making(commands.Cog):
     @commands.command(name="beg",description="This command is used to beg some bot currecncy.")
     @commands.cooldown(1,30,commands.BucketType.user)
     async def beg(self,ctx):
-        userid=str(ctx.author.id)
+        userid=ctx.author.id
         users = await self.lol.get_shop_data()
         inv = users[str(userid)]["Inventory"]
         for pog in inv:
@@ -67,7 +67,7 @@ class money_making(commands.Cog):
         user_roll=random.randint(1,12)
         bot_roll=random.randint(1,12)
         payout=random.randint(50,200)
-        userid=str(ctx.author.id)
+        userid=ctx.author.id
         balance=await self.bi.get_wallet(userid)
 
         if balance<amount:
@@ -108,8 +108,8 @@ class money_making(commands.Cog):
         if user is None:
             await ctx.send("Who are you robbing dum dum")
             return
-        userid=str(user.id)
-        authid=str(ctx.author.id)
+        userid=user.id
+        authid=ctx.author.id
         user_bal=await self.bi.get_wallet(userid)
         auth_bal= await self.bi.get_wallet(authid)
 
@@ -132,7 +132,7 @@ class money_making(commands.Cog):
     @commands.command(name="daily",description="This command can be used once every 24h, it gives you some coins and the number of coins depend on your daily streak.")
     @commands.cooldown(1,86400,BucketType.user)
     async def daily(self,ctx):
-        userid=str(ctx.author.id)
+        userid=ctx.author.id
         await self.bi.create_account(userid)
         amount=10000
         streak=await self.bi.get_daily_streak(userid)
