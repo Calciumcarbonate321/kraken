@@ -98,13 +98,10 @@ class General(commands.Cog):
             await ctx.send("Must be a number!")
             return
 
-    def clean_code(code:str):
-        if code.startswith("```") and code.endswith("```"):
-            return "\n".join(code.split("\n")[1:][:-3])
 
     @commands.command(name="uptime")
     async def uptime(self,ctx):
-        now=datetime.utcnow()
+        now=datetime.utcnow()   
         elapsed = now - starttime
         seconds = elapsed.seconds
         minutes, seconds = divmod(seconds, 60)

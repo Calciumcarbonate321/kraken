@@ -1,78 +1,79 @@
+from collections import UserDict
 import discord
-from discord import user
 from discord.ext import commands
 from discord.ext.commands import Cog
 import json
 
 class bank(commands.Cog):
+    '''This cog has the bank commands of the bot economy'''
+
     def __init__(self,client):
         self.client=client
 
+    async def get_wallet(self,user_id :int):
+        async with self.client.db.execute(f"SELECT * FROM bankdata WHERE userid={user_id}") as cursor:
+            e=await cursor.fetchone()
+            return e[1]
+
+    async def get_bal(self,user_id :int):
+        async with self.client.db.execute(f"SELECT * FROM bankdata WHERE userid={user_id}") as cursor:
+            e=await cursor.fetchone()
+            return e[2]
+
     async def create_account(self,user_id):
-        with open('data/bank.json','r',encoding='utf8') as r:
-            data=json.load(r)
-            if user_id not in data:
-                data[user_id]={'bal' : 0,'wallet' : 0,'bank_limit' : 100000,'daily':0}                
-        with open('data/bank.json','w',encoding='utf8') as r:
-            r.write(json.dumps(data,indent=4))
+        async with self.client.db.execute(f"SELECT * FROM bankdata WHERE userid={user_id}") as c:
+            e=await c.fetchall()
+            if len(e)==0:
+                await self.client.db.execute(f"INSERT INTO bankdata (userid,wallet,bankbal,daily) VALUES ({user_id},0,0,0)")
+                await self.client.db.commit()
             
     async def get_daily_streak(self,user_id):
-        with open('data/bank.json','r',encoding='utf8') as r:
-            data=json.load(r)
-            return data[user_id]['daily']
+        async with self.client.db.execute(f"SELECT * FROM bankdata WHERE userid={user_id}") as cursor:
+            e=await cursor.fetchone()
+            return e[3]
 
     async def update_daily_streak(self,user_id):
-        with open('data/bank.json','r',encoding='utf8') as r:
-            data=json.load(r)
-            data[user_id]['daily']+=1
-        with open('data/bank.json','w',encoding='utf8') as r:
-            r.write(json.dumps(data,indent=4))
+        current=await self.get_daily_streak(user_id)
+        new=current+1
+        await self.client.db.execute(f"UPDATE bankdata SET daily={new} WHERE userid={user_id}")
+        await self.client.db.commit()
 
-    async def get_wallet(self,user_id):
-        with open('data/bank.json','r',encoding='utf8') as r:
-            data=json.load(r)
-            wallet=data[user_id]['wallet']
-            wallet=int(wallet)
-            return wallet
+
     
     async def get_bank_limit(self,user_id):
         with open('data/bank.json','r',encoding='utf8') as r:
-            data=json.load(r)
-            return data[user_id]['bank_limit']
-    
-    async def get_bal(self,user_id):
-        with open('data/bank.json','r',encoding='utf8') as r:
-            data=json.load(r)
-            bal=data[user_id]['bal']
-            return data[user_id]['bal']
+            return 1000000
+
 
     async def add_money(self,user_id,amount : int):
-        with open('data/bank.json','r',encoding='utf8') as r:
-            data=json.load(r)
-            data[user_id]['wallet']+=amount
-        with open('data/bank.json','w',encoding='utf8') as r:
-            r.write(json.dumps(data,indent=4))
+        current=await self.get_wallet(user_id)
+        new=current+amount
+        await self.client.db.execute(f"UPDATE bankdata SET wallet = {new} WHERE userid={user_id}")
+        await self.client.db.commit()
+
+
 
     async def remove_money(self,user_id,amount : int):
-        with open('data/bank.json','r',encoding='utf8') as r:
-            data=json.load(r)
-            data[user_id]['wallet']-=amount
-        with open('data/bank.json','w',encoding='utf8') as r:
-            r.write(json.dumps(data,indent=4))
+        current=await self.get_wallet(user_id)
+        new=current-amount
+        await self.client.db.execute(f"UPDATE bankdata SET wallet = {new} WHERE userid={user_id}")
+        await self.client.db.commit()
+
                 
     async def add_money_bank(self,user_id,amount : int):
-        with open('data/bank.json','r',encoding='utf8') as r:
-            data=json.load(r)
-            data[user_id]['bal']+=amount
-        with open('data/bank.json','w',encoding='utf8') as r:
-            r.write(json.dumps(data,indent=4))
+        current=await self.get_bal(user_id)
+        new=current+amount
+        await self.client.db.execute(f"UPDATE bankdata SET bankbal = {new} WHERE userid={user_id}")
+        await self.client.db.commit()
+
 
     async def remove_money_bank(self,user_id,amount : int):
-        with open('data/bank.json','r',encoding='utf8') as r:
-            data=json.load(r)
-            data[user_id]['bal']-=amount
-        with open('data/bank.json','w',encoding='utf8') as r:
-            r.write(json.dumps(data,indent=4))            
+        current=await self.get_bal(user_id)
+        new=current-amount
+        await self.client.db.execute(f"UPDATE bankdata SET bankbal = {new} WHERE userid={user_id}")
+        await self.client.db.commit()
+
+            
 
     @commands.command(aliases=['bal','balance'],description="This command will show your bank and wallet details.")
     async def bank_balance(self,ctx,user : discord.User=None):
@@ -90,6 +91,7 @@ class bank(commands.Cog):
         embed.add_field(name="Bank",value=f"⌬`{bank_bal}`/`{bank_limit}`",inline=False)
         embed.set_footer(text=f"Command invoked by {ctx.author.name}",icon_url=ctx.author.avatar_url)
         await ctx.send(embed=embed)
+        
 
     @commands.command(aliases=['with','withdraw'],description="This command is used to some bot currency from your bank.")
     async def witho(self,ctx,amount :str=None):      
@@ -112,9 +114,8 @@ class bank(commands.Cog):
 
         if amount in ["max", "all"]:
             amount=await self.get_bal(userid)
-            amount=int(amount)
 
-        bankbal=int(await self.get_bal(userid))
+        bankbal=await self.get_bal(userid)
         if amount>bankbal:
             await ctx.send(f"You don't even have that much money in your bank, you have only ⌬{bankbal}")
         else:

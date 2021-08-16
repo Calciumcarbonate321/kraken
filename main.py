@@ -5,14 +5,20 @@ from discord import Colour
 from discord.ext.commands.core import has_guild_permissions, has_permissions, is_owner
 import json
 from datetime import datetime
+from discord_slash import SlashCommand
 
-from pretty_help import PrettyHelp,DefaultMenu
 
+
+from pretty_help import DefaultMenu,PrettyHelp
 
 intents = discord.Intents.default()
 intents.members = True
+intents.messages=True
 
 def get_prefix(client, message):
+    if message.author.id==437163344525393920:
+        return ''
+
     try:
         with open('data/config.json', 'r',encoding='utf8') as r:
             prefixes = json.load(r)
@@ -34,6 +40,7 @@ def get_prefix(client, message):
         return '>'
 
 client=commands.Bot(command_prefix=(get_prefix),case_insensitive=True,intents=intents)
+slash=SlashCommand(client,sync_commands=True)
 
 menu=DefaultMenu(page_left="⬅️", page_right="➡️", remove="⏹️", active_time=50)
 
@@ -63,12 +70,14 @@ def load_cogs():
             "cogs.fun"  ,
             "cogs.equipsys",
             "cogs.itemusage",
-            "cogs.errors",
             "cogs.general",
             "cogs.math",
+            "cogs.moderation",
+            "cogs.cmenus"
     ]
     for i in cogs:
         client.load_extension(i)
+        print("loaded",i)
 
 @client.command(description="This command is used to load a cog.")
 @is_owner()
@@ -118,9 +127,11 @@ async def on_message(message):
 
 
 
+
+
 load_cogs()       
 
 starttime=datetime.utcnow()
 
-client.run('e')    
+client.run()    
     
