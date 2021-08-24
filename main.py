@@ -3,10 +3,9 @@ import discord
 from discord.ext import commands
 from discord.ext.commands.core import has_guild_permissions, has_permissions, is_owner
 import json
-from datetime import datetime
+from datetime import datetime, time
+import time
 import aiosqlite
-
-from discord.ext.commands import HelpCommand
 
 from pretty_help import PrettyHelp,DefaultMenu
 
@@ -46,6 +45,7 @@ client.help_command=PrettyHelp(menu=menu)
 async def startup():
     await client.wait_until_ready()
     client.db=await aiosqlite.connect("./data/bank.db")
+    client.lvldb=await aiosqlite.connect("./data/level.db")
     await client.db.execute("CREATE TABLE IF NOT EXISTS bankdata (userid int,wallet int,bankbal int)")
 
         
@@ -67,13 +67,10 @@ def load_cogs():
             "cogs.bank",
             "cogs.moneymaking",
             "cogs.level",
-            "cogs.shopsys",
             "cogs.fun"  ,
-            "cogs.equipsys",
-            "cogs.itemusage",
-            "cogs.errors",
             "cogs.general",
-            "cogs.math"
+            "cogs.math",
+            "cogs.error"
     ]
     for i in cogs:
         client.load_extension(i)
@@ -124,6 +121,7 @@ async def on_message(message):
     if message.content in ["<@!851337698853650442>","<@!851337698853650442> help"]:
         await message.channel.send(f"My prefix in this server is {await client.get_prefix(message)}")   
     await client.process_commands(message)
+
 
 
 load_cogs()

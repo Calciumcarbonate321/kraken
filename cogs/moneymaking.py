@@ -5,21 +5,16 @@ from discord.colour import Color
 from discord.ext import commands
 from discord.ext.commands import Cog
 import random
-import json
-
 
 from discord.ext.commands.cooldowns import BucketType
 from cogs.bank import bank
-from cogs.shopsys import shop
-
 
 class money_making(commands.Cog):
     '''This is the cog where all bot curreny earning commands are there'''
 
     def __init__(self,client):
         self.client=client
-        self.bi=bank(client) #instance of the bank class from bank.py file
-        self.lol=shop(client)
+        self.bi=bank(client) 
 
     @commands.command(name="beg",description="This command is used to beg some bot currecncy.")
     @commands.cooldown(1,30,commands.BucketType.user)

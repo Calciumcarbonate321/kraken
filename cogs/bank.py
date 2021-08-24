@@ -25,12 +25,11 @@ class bank(commands.Cog):
             return e[2]
 
     async def create_account(self,user_id):
-        with open('data/bank.json','r',encoding='utf8') as r:
-            data=json.load(r)
-            if user_id not in data:
-                data[user_id]={'bal' : 0,'wallet' : 0,'bank_limit' : 100000,'daily':0}                
-        with open('data/bank.json','w',encoding='utf8') as r:
-            r.write(json.dumps(data,indent=4))
+        async with self.client.db.execute(f"SELECT * FROM bankdata WHERE userid={user_id}") as c:
+            e=await c.fetchall()
+            if len(e)==0:
+                await self.client.db.execute(f"INSERT INTO bankdata (userid,wallet,bankbal,daily) VALUES ({user_id},0,0,0)")
+                await self.client.db.commit()
             
     async def get_daily_streak(self,user_id):
         async with self.client.db.execute(f"SELECT * FROM bankdata WHERE userid={user_id}") as cursor:
@@ -46,8 +45,7 @@ class bank(commands.Cog):
 
     
     async def get_bank_limit(self,user_id):
-        with open('data/bank.json','r',encoding='utf8') as r:
-            return 1000000
+        return 1000000
 
 
     async def add_money(self,user_id,amount : int):
@@ -84,7 +82,7 @@ class bank(commands.Cog):
     async def bank_balance(self,ctx,user : discord.User=None):
         if user is None:
             user=ctx.author
-        userid=str(user.id)
+        userid=user.id
         await self.create_account(userid)
 
         wallet=await self.get_wallet(userid)
@@ -100,7 +98,7 @@ class bank(commands.Cog):
 
     @commands.command(aliases=['with','withdraw'],description="This command is used to some bot currency from your bank.")
     async def witho(self,ctx,amount :str=None):      
-        userid=str(ctx.author.id)
+        userid=ctx.author.id
         await self.create_account(userid)
         if amount is None:
             await ctx.send("What are you withdrawing you idiot")
@@ -131,7 +129,7 @@ class bank(commands.Cog):
 
     @commands.command(aliases=['dep','deposit'],description="This command is used to deposit bot currency in your bank, so that it cannot be stolen by other users.")
     async def depo(self,ctx,amount :str=None):      
-        userid=str(ctx.author.id)
+        userid=ctx.author.id
         await self.create_account(userid)
         if amount is None:
             await ctx.send("What are you depositing you idiot")
@@ -175,8 +173,8 @@ class bank(commands.Cog):
     @commands.command(aliases=['share','give'],description="This command is used to share some bot currency with another user.")
     async def givemoney(self,ctx,user: discord.User,amount : int=None):
         try:
-            userid=str(user.id)
-            authid=str(ctx.author.id)
+            userid=user.id
+            authid=ctx.author.id
             await self.create_account(userid)
             await self.create_account(authid)
             authbal=await self.get_wallet(authid)

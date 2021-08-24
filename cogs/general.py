@@ -12,9 +12,7 @@ class General(commands.Cog):
     def __init__(self,client):
         self.client=client
         self.stopwatches={}
-
-
-    
+  
     @commands.command(aliases=["sw"])
     async def stopwatch(self, ctx):
         author = ctx.author
