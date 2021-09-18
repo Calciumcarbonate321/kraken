@@ -16,19 +16,11 @@ class money_making(commands.Cog):
         self.client=client
         self.bi=bank(client) 
 
-    @commands.command(name="beg",description="This command is used to beg some bot currecncy.")
+    @commands.command(name="beg",brief="When you are desperate for bot currency, you can _beg_",description="This command is used to beg some bot currecncy.")
     @commands.cooldown(1,30,commands.BucketType.user)
     async def beg(self,ctx):
         userid=ctx.author.id
-        users = await self.lol.get_shop_data()
-        inv = users[str(userid)]["Inventory"]
-        for pog in inv:
-            eqp = pog["equipped"]
-            break
-        if eqp == "luckycharm":
-            payout = random.randint(0,1600)
-        else:
-            payout = random.randint(0,800)
+        payout = random.randint(0,800)
        
         payout = int(payout)
         
@@ -56,9 +48,10 @@ class money_making(commands.Cog):
             await ctx.send(embed=embed)
 
 
-    @commands.command(aliases=['bet','rolls'],description="This is the bet command, you and the bot roll a dice once each, whoever has the highest number will win the game.")
+    @commands.command(name="gamble",aliases=['bet','rolls'],brief="A simple gambling command where you can bet your bot currency.",description="This is the bet command, you and the bot roll a dice once each, whoever has the highest number will win the game.")
     async def gamble(self,ctx,amount : int=None):
-
+        if amount is None:
+            await ctx.semd("You should actually bet some money in this.")
         user_roll=random.randint(1,12)
         bot_roll=random.randint(1,12)
         payout=random.randint(50,200)
@@ -97,7 +90,7 @@ class money_making(commands.Cog):
             embed.set_footer(text="That was a dramatic tie",icon_url=ctx.author.avatar_url)
             await ctx.send(embed=embed)
 
-    @commands.command(name="rob",description="This command is used to rob an user of their bot currency, there is a chance that you will fail the robbery and will pay a fine to that user.")
+    @commands.command(name="rob",brief="Basically a rob command",description="This command is used to rob an user of their bot currency, there is a chance that you will fail the robbery and will pay a fine to that user.")
     @commands.cooldown(1,30,type=BucketType.user)
     async def rob(self,ctx,user : discord.User=None):
         if user is None:
@@ -124,7 +117,7 @@ class money_making(commands.Cog):
             await self.bi.remove_money(userid,amountgained)
             await self.bi.add_money(authid,amountgained)
 
-    @commands.command(name="daily",description="This command can be used once every 24h, it gives you some coins and the number of coins depend on your daily streak.")
+    @commands.command(name="daily",brief="This command can be used once every 24h, it gives you some coins and the number of coins depend on your daily streak.",description="This command can be used once every 24h, it gives you some coins and the number of coins depend on your daily streak.")
     @commands.cooldown(1,86400,BucketType.user)
     async def daily(self,ctx):
         userid=ctx.author.id

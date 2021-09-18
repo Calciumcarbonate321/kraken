@@ -53,7 +53,7 @@ class leveling(commands.Cog):
         await self.make_user_account_in_guild(message.guild.id,message.author.id)
         await self.add_exp(message.guild.id,message.author.id)
         
-    @commands.command(aliases=['lvl'],description="This command shows your level in the bot's chat leveling system.")
+    @commands.command(name="level",aliases=['lvl'],brief="This command  shows your level in the bot's chat leveling system.",description="This command shows your level in the bot's chat leveling system.")
     async def level(self,ctx,user : discord.User=None):
         await self.make_user_account_in_guild(ctx.guild.id,ctx.author.id)
         guild_id=ctx.guild.id
@@ -68,7 +68,7 @@ class leveling(commands.Cog):
         embed.set_footer(text="Those are some wild numbers")
         await ctx.send(embed=embed)
 
-    @commands.command(name="setlvl",description="This command is used to modify a user's level.")
+    @commands.command(name="setlvl",brief="This command is used to modify a user's level.",description="This command is used to modify a user's level.")
     @commands.has_permissions(manage_roles=True)
     async def setlvl(self,ctx,user : discord.User=None,newlvl : int=None):
         try:

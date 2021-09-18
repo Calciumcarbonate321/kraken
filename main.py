@@ -35,11 +35,17 @@ def get_prefix(client, message):
         return '>'
 
 client=commands.Bot(command_prefix=(get_prefix),case_insensitive=True)
-
+client.number_emojis = ["<:dd_one:879621387927576596>",
+                "<:dd_two:879621389643046912>",
+                "<:dd_three:879621391564017674>",
+                "<:dd_four:879621393547927612>",
+                "<:dd_five:879621400359489566>",
+                "<:dd_six:879621402171412520>",
+                "<:dd_seven:879621403945631764>",
+                "<:dd_eight:879621405862400020>",
+                "<:dd_nine:879621407854690405>"]
 
 menu=DefaultMenu(page_left="⬅️", page_right="➡️", remove="⏹️", active_time=50)
-
-
 client.help_command=PrettyHelp(menu=menu)
 
 async def startup():
@@ -53,6 +59,7 @@ async def startup():
 @client.event
 async def on_ready():
     print("ready")
+    print(client.user)
 
 @client.command(name="ping",brief="This command returns the bot's latency.",description="This command returns the client latency.That is,average amount of time the bot takes to reply.")
 async def ping(ctx):
@@ -69,8 +76,7 @@ def load_cogs():
             "cogs.level",
             "cogs.fun"  ,
             "cogs.general",
-            "cogs.math",
-            "cogs.error"
+            "cogs.errors"
     ]
     for i in cogs:
         client.load_extension(i)
@@ -118,7 +124,7 @@ async def prefix(ctx,prefix : str):
 
 @client.event
 async def on_message(message):     
-    if message.content in ["<@!851337698853650442>","<@!851337698853650442> help"]:
+    if message.content in ["<@!851337698853650442>"]:
         await message.channel.send(f"My prefix in this server is {await client.get_prefix(message)}")   
     await client.process_commands(message)
 
