@@ -55,7 +55,7 @@ class Fun(commands.Cog):
             embed.set_footer(text=factjson['fact'])
             await ctx.send(embed=embed) 
 
-    @commands.command(description='For when plain text just is not enough')
+    @commands.command(brief="Emojify your text",description='For when plain text just is not enough')
     async def emojify(self,ctx, *, text: str):
 
         author = ctx.message.author
@@ -79,7 +79,8 @@ class Fun(commands.Cog):
                 await ctx.send(''+emojified+'')
 
 
-    @commands.command(name="8ball")
+
+    @commands.command(name="8ball",brief="Ask a yes/no question",description="Ask a yes/no question")
     async def _8ball(self, ctx, *, question: str):
         if question.endswith("?") and question != "?":
             await ctx.send("`" + (choice(self.ball)) + "`")

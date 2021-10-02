@@ -1,12 +1,9 @@
 from collections import UserDict
 import discord
 from discord.ext import commands
-from discord.ext.commands import Cog
-import json
 
 class bank(commands.Cog):
     '''This cog has the bank commands of the bot economy'''
-
     def __init__(self,client):
         self.client=client
 
@@ -64,9 +61,6 @@ class bank(commands.Cog):
         new=current-amount
         await self.client.db.execute(f"UPDATE bankdata SET bankbal = {new} WHERE userid={user_id}")
         await self.client.db.commit()
-
-           
-
     @commands.command(name='balance',aliases=['bal'],brief="This command will show your bank and wallet details.",description="This command will show your bank and wallet details.")
     async def bank_balance(self,ctx,user : discord.User=None):
         if user is None:
@@ -82,8 +76,7 @@ class bank(commands.Cog):
         embed.add_field(name="Wallet",value=f"⌬`{wallet}`")
         embed.add_field(name="Bank",value=f"⌬`{bank_bal}`/`{bank_limit}`",inline=False)
         embed.set_footer(text=f"Command invoked by {ctx.author.name}",icon_url=ctx.author.avatar_url)
-        await ctx.send(embed=embed)
-        
+        await ctx.send(embed=embed)        
 
     @commands.command(name="withdraw",aliases=['with'],brief="You can use this command to withdraw money from your bank.",description="This command is used to some bot currency from your bank.(use word \"max\" to withdraw all the money from your bank)")
     async def witho(self,ctx,amount :str=None):      
@@ -156,9 +149,7 @@ class bank(commands.Cog):
             await self.add_money_bank(userid,amount)
             await self.remove_money(userid,amount)
             await ctx.send(f"You have deposited ⌬{amount}, your current wallet balance is ⌬{await self.get_wallet(userid)} and you have ⌬{await self.get_bal(userid)} in your bank")
-
         return
-
     @commands.command(name="share",aliases=['share','give'],brief="You can share some bot currency to other users with this command.",description="This command is used to share some bot currency with another user.")
     async def givemoney(self,ctx,user: discord.User,amount : int=None):
         try:
@@ -179,11 +170,6 @@ class bank(commands.Cog):
             await ctx.send(f"You gave ⌬{amount} to {user.name}")
         except:
             await ctx.send("There was some error when running this command,make sure the format is correct, the correct format : `>give @user amount`")
-
-
-            
-
-
 
 def setup(client):
     client.add_cog(bank(client))

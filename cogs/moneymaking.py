@@ -1,9 +1,5 @@
 import discord
-from discord import user
-from discord import client
-from discord.colour import Color
 from discord.ext import commands
-from discord.ext.commands import Cog
 import random
 
 from discord.ext.commands.cooldowns import BucketType
@@ -133,9 +129,6 @@ class money_making(commands.Cog):
         embed.add_field(name=f"You can get atleast ⌬10000 by using this command once every 24 hours", value="The amount that you get depends on your daily streak", inline=False)
         embed.set_footer(text=f"Current daily streak={await self.bi.get_daily_streak(userid)}")
         await ctx.send(embed=embed)
-
-    
-
 
 def setup(client):
     client.add_cog(money_making(client))

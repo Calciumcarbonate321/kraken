@@ -28,7 +28,7 @@ class General(commands.Cog):
     @commands.command(name="uptime")
     async def uptime(self,ctx):
         now=datetime.utcnow()
-        elapsed = now - starttime
+        elapsed = now - self.client.starttime
         seconds = elapsed.seconds
         minutes, seconds = divmod(seconds, 60)
         hours, minutes = divmod(minutes, 60)
