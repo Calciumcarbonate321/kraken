@@ -1,3 +1,4 @@
+from collections import UserDict
 import discord
 from discord.ext import commands
 
@@ -60,7 +61,6 @@ class bank(commands.Cog):
         new=current-amount
         await self.client.db.execute(f"UPDATE bankdata SET bankbal = {new} WHERE userid={user_id}")
         await self.client.db.commit()
-
     @commands.command(name='balance',aliases=['bal'],brief="This command will show your bank and wallet details.",description="This command will show your bank and wallet details.")
     async def bank_balance(self,ctx,user : discord.User=None):
         if user is None:
@@ -150,8 +150,7 @@ class bank(commands.Cog):
             await self.remove_money(userid,amount)
             await ctx.send(f"You have deposited ⌬{amount}, your current wallet balance is ⌬{await self.get_wallet(userid)} and you have ⌬{await self.get_bal(userid)} in your bank")
         return
-
-    @commands.command(name="share",aliases=['give'],brief="You can share some bot currency to other users with this command.",description="This command is used to share some bot currency with another user.")
+    @commands.command(name="share",aliases=['share','give'],brief="You can share some bot currency to other users with this command.",description="This command is used to share some bot currency with another user.")
     async def givemoney(self,ctx,user: discord.User,amount : int=None):
         try:
             userid=user.id

@@ -4,6 +4,7 @@ from discord.ext.commands import Cog
 import random
 import time
 from datetime import datetime,timedelta
+from main import *
 
 class General(commands.Cog):
     '''This cog has the general commands which aren't categorised'''

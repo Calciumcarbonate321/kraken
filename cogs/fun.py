@@ -79,6 +79,7 @@ class Fun(commands.Cog):
                 await ctx.send(''+emojified+'')
 
 
+
     @commands.command(name="8ball",brief="Ask a yes/no question",description="Ask a yes/no question")
     async def _8ball(self, ctx, *, question: str):
         if question.endswith("?") and question != "?":

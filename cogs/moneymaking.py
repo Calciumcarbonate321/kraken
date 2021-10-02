@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 import random
+
 from discord.ext.commands.cooldowns import BucketType
 from cogs.bank import bank
 
