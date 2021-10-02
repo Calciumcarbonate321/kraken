@@ -35,7 +35,7 @@ def get_prefix(client, message):
         return '>'
 
 client=commands.Bot(command_prefix=(get_prefix),case_insensitive=True)
-client.number_emojis = ["<:dd_one:879621387927576596>",
+client.number_emojis =["<:dd_one:879621387927576596>",
                 "<:dd_two:879621389643046912>",
                 "<:dd_three:879621391564017674>",
                 "<:dd_four:879621393547927612>",
