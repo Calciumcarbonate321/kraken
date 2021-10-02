@@ -2,11 +2,35 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Cog
 import aiohttp
-
+from random import choice
 
 class Fun(commands.Cog):
+    '''This cog has some pretty fun commands in it'''
+
     def __init__(self,client):
         self.client=client
+        self.ball = [
+        "As I see it, yes",
+        "It is certain",
+        "It is decidedly so",
+        "Most likely",
+        "Outlook good",
+        "Signs point to yes",
+        "Without a doubt",
+        "Yes",
+        "Yes – definitely",
+        "You may rely on it",
+        "Reply hazy, try again",
+        "Ask again later",
+        "Better not tell you now",
+        "Cannot predict now",
+        "Concentrate and ask again",
+        "Don't count on it",
+        "My reply is no",
+        "My sources say no",
+        "Outlook not so good",
+        "Very doubtful",
+    ]
 
     @commands.command(aliases=['catpics','catpic','cat'],description="This command will show a random cat picture.")
     async def kitty(self,ctx):
@@ -31,7 +55,7 @@ class Fun(commands.Cog):
             embed.set_footer(text=factjson['fact'])
             await ctx.send(embed=embed) 
 
-    @commands.command(description='For when plain text just is not enough')
+    @commands.command(brief="Emojify your text",description='For when plain text just is not enough')
     async def emojify(self,ctx, *, text: str):
 
         author = ctx.message.author
@@ -55,6 +79,13 @@ class Fun(commands.Cog):
                 await ctx.send(''+emojified+'')
 
 
+    @commands.command(name="8ball",brief="Ask a yes/no question",description="Ask a yes/no question")
+    async def _8ball(self, ctx, *, question: str):
+        if question.endswith("?") and question != "?":
+            await ctx.send("`" + (choice(self.ball)) + "`")
+        else:
+            await ctx.send("That doesn't look like a question.")
+              
 
 def setup(client):
     client.add_cog(Fun(client))

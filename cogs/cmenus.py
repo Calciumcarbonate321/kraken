@@ -4,16 +4,14 @@ from discord.ext import commands
 from discord_slash import cog_ext
 from discord_slash.context import MenuContext,SlashContext
 from discord_slash.model import ContextMenuType
+from io import BytesIO
+import aiohttp
 
 class Cmenus(commands.Cog):
     def __init__(self,client):
         self.client=client
     
     guild_ids=[752757415224672326]
-
-    @cog_ext.cog_slash(name="prefix",guild_ids=guild_ids)
-    async def slash_help(self,ctx:SlashContext):
-        await ctx.send(f"My prefix is {self.client.get_prefix(ctx.message)}")
     
     @cog_ext.cog_context_menu(name="userinfo",target=ContextMenuType.MESSAGE,guild_ids=guild_ids)
     async def get_user_info(self,ctx: MenuContext):
@@ -43,12 +41,25 @@ class Cmenus(commands.Cog):
     async def savemsg(self,ctx : MenuContext):
         msg=ctx.target_message
         embeds=msg.embeds
-        stickers=msg.stickers
-        await ctx.author.send(content=f"{msg.author} said :`{msg.content}`, the embeds(if any) in it are sent below:")
+    
+        e=await ctx.author.send(content=f"{msg.author} said :`{msg.content}`, the embeds(if any) in it are sent below:")
         for i in embeds:
             await ctx.author.send(embed=i)  
         
+        await ctx.send(f"Check ur dms :),[Jump Url]({e.jump_url})",hidden=True)
+    
+    @cog_ext.cog_context_menu(name="stealavatar",target=ContextMenuType.USER,guild_ids=guild_ids)
+    async def stealavatar(self,ctx:MenuContext):
+        a="https://cdn.discordapp.com"
+        
+        async with aiohttp.request("GET",a+ctx.target_author.avatar_url._url) as r:
+            i=await r.read()
+        e=await ctx.author.send(file=discord.File(BytesIO(i),filename="avatar.png"))
+        await ctx.send(f"Check ur dms :),[Jump Url]({e.jump_url})",hidden=True)
+    
 
     
+
+
 def setup(client):
     client.add_cog(Cmenus(client))

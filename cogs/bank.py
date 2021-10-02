@@ -1,12 +1,8 @@
-from collections import UserDict
 import discord
 from discord.ext import commands
-from discord.ext.commands import Cog
-import json
 
 class bank(commands.Cog):
     '''This cog has the bank commands of the bot economy'''
-
     def __init__(self,client):
         self.client=client
 
@@ -37,13 +33,9 @@ class bank(commands.Cog):
         new=current+1
         await self.client.db.execute(f"UPDATE bankdata SET daily={new} WHERE userid={user_id}")
         await self.client.db.commit()
-
-
     
     async def get_bank_limit(self,user_id):
-        with open('data/bank.json','r',encoding='utf8') as r:
-            return 1000000
-
+        return 1000000
 
     async def add_money(self,user_id,amount : int):
         current=await self.get_wallet(user_id)
@@ -51,14 +43,11 @@ class bank(commands.Cog):
         await self.client.db.execute(f"UPDATE bankdata SET wallet = {new} WHERE userid={user_id}")
         await self.client.db.commit()
 
-
-
     async def remove_money(self,user_id,amount : int):
         current=await self.get_wallet(user_id)
         new=current-amount
         await self.client.db.execute(f"UPDATE bankdata SET wallet = {new} WHERE userid={user_id}")
         await self.client.db.commit()
-
                 
     async def add_money_bank(self,user_id,amount : int):
         current=await self.get_bal(user_id)
@@ -66,20 +55,17 @@ class bank(commands.Cog):
         await self.client.db.execute(f"UPDATE bankdata SET bankbal = {new} WHERE userid={user_id}")
         await self.client.db.commit()
 
-
     async def remove_money_bank(self,user_id,amount : int):
         current=await self.get_bal(user_id)
         new=current-amount
         await self.client.db.execute(f"UPDATE bankdata SET bankbal = {new} WHERE userid={user_id}")
         await self.client.db.commit()
 
-            
-
-    @commands.command(aliases=['bal','balance'],description="This command will show your bank and wallet details.")
+    @commands.command(name='balance',aliases=['bal'],brief="This command will show your bank and wallet details.",description="This command will show your bank and wallet details.")
     async def bank_balance(self,ctx,user : discord.User=None):
         if user is None:
             user=ctx.author
-        userid=str(user.id)
+        userid=user.id
         await self.create_account(userid)
 
         wallet=await self.get_wallet(userid)
@@ -90,12 +76,11 @@ class bank(commands.Cog):
         embed.add_field(name="Wallet",value=f"⌬`{wallet}`")
         embed.add_field(name="Bank",value=f"⌬`{bank_bal}`/`{bank_limit}`",inline=False)
         embed.set_footer(text=f"Command invoked by {ctx.author.name}",icon_url=ctx.author.avatar_url)
-        await ctx.send(embed=embed)
-        
+        await ctx.send(embed=embed)        
 
-    @commands.command(aliases=['with','withdraw'],description="This command is used to some bot currency from your bank.")
+    @commands.command(name="withdraw",aliases=['with'],brief="You can use this command to withdraw money from your bank.",description="This command is used to some bot currency from your bank.(use word \"max\" to withdraw all the money from your bank)")
     async def witho(self,ctx,amount :str=None):      
-        userid=str(ctx.author.id)
+        userid=ctx.author.id
         await self.create_account(userid)
         if amount is None:
             await ctx.send("What are you withdrawing you idiot")
@@ -124,9 +109,9 @@ class bank(commands.Cog):
             await ctx.send(f"You have withdrawn ⌬{amount}, your current wallet balance is ⌬{await self.get_wallet(userid)} and you have ⌬{await self.get_bal(userid)} in your bank")
         return
 
-    @commands.command(aliases=['dep','deposit'],description="This command is used to deposit bot currency in your bank, so that it cannot be stolen by other users.")
+    @commands.command(name="deposit",aliases=['dep'],brief="You can use this command to deposit some money from your bank.",description="This command is used to deposit bot currency in your bank, so that it cannot be stolen by other users.(use word \"max\" if you want to deposit the maximum amount into your bank.)")
     async def depo(self,ctx,amount :str=None):      
-        userid=str(ctx.author.id)
+        userid=ctx.author.id
         await self.create_account(userid)
         if amount is None:
             await ctx.send("What are you depositing you idiot")
@@ -164,14 +149,13 @@ class bank(commands.Cog):
             await self.add_money_bank(userid,amount)
             await self.remove_money(userid,amount)
             await ctx.send(f"You have deposited ⌬{amount}, your current wallet balance is ⌬{await self.get_wallet(userid)} and you have ⌬{await self.get_bal(userid)} in your bank")
-
         return
 
-    @commands.command(aliases=['share','give'],description="This command is used to share some bot currency with another user.")
+    @commands.command(name="share",aliases=['give'],brief="You can share some bot currency to other users with this command.",description="This command is used to share some bot currency with another user.")
     async def givemoney(self,ctx,user: discord.User,amount : int=None):
         try:
-            userid=str(user.id)
-            authid=str(ctx.author.id)
+            userid=user.id
+            authid=ctx.author.id
             await self.create_account(userid)
             await self.create_account(authid)
             authbal=await self.get_wallet(authid)
@@ -187,11 +171,6 @@ class bank(commands.Cog):
             await ctx.send(f"You gave ⌬{amount} to {user.name}")
         except:
             await ctx.send("There was some error when running this command,make sure the format is correct, the correct format : `>give @user amount`")
-
-
-            
-
-
 
 def setup(client):
     client.add_cog(bank(client))

@@ -1,24 +1,22 @@
+import asyncio
 import discord
-from discord.activity import Game
+from discord import activity
 from discord.ext import commands
-from discord import Colour
 from discord.ext.commands.core import has_guild_permissions, has_permissions, is_owner
 import json
-from datetime import datetime
+from datetime import datetime, time
+import time
+import aiosqlite
+from cogs.help import MyHelp
 from discord_slash import SlashCommand
 
+with open('token.txt','r') as r:
+    token=str(r.read())
 
-
-from pretty_help import DefaultMenu,PrettyHelp
-
-intents = discord.Intents.default()
-intents.members = True
-intents.messages=True
 
 def get_prefix(client, message):
     if message.author.id==437163344525393920:
-        return ''
-
+        return ['','>']
     try:
         with open('data/config.json', 'r',encoding='utf8') as r:
             prefixes = json.load(r)
@@ -39,21 +37,34 @@ def get_prefix(client, message):
     except: 
         return '>'
 
-client=commands.Bot(command_prefix=(get_prefix),case_insensitive=True,intents=intents)
+client=commands.Bot(command_prefix=get_prefix,case_insensitive=True,intents=discord.Intents.all(),activity=discord.Activity(type=discord.ActivityType.competing, name="@Kraken help"))
+client.number_emojis = ["<:dd_one:879621387927576596>",
+                "<:dd_two:879621389643046912>",
+                "<:dd_three:879621391564017674>",
+                "<:dd_four:879621393547927612>",
+                "<:dd_five:879621400359489566>",
+                "<:dd_six:879621402171412520>",
+                "<:dd_seven:879621403945631764>",
+                "<:dd_eight:879621405862400020>",
+                "<:dd_nine:879621407854690405>"]
+
+client.help_command=MyHelp()
 slash=SlashCommand(client,sync_commands=True)
 
-menu=DefaultMenu(page_left="⬅️", page_right="➡️", remove="⏹️", active_time=50)
+async def startup():
+    await client.wait_until_ready()
+    client.db=await aiosqlite.connect("./data/bank.db")
+    client.lvldb=await aiosqlite.connect("./data/level.db")
+    await client.db.execute("CREATE TABLE IF NOT EXISTS bankdata (userid int,wallet int,bankbal int)")
 
-client.help_command=PrettyHelp(menu=menu)
-
-
-
+        
 
 @client.event
 async def on_ready():
     print("ready")
+    print(client.user)
 
-@client.command(name="ping",brief="This command returns the client latency.")
+@client.command(name="ping",brief="This command returns the bot's latency.",description="This command returns the client latency.That is,average amount of time the bot takes to reply.")
 async def ping(ctx):
     embed=discord.Embed(name="Client latency",descrption="This command shows the latency of the bot.",color=discord.Colour.random())
     embed.add_field(name="Client latency",value="Client latency is the time taken by the bot to respond to your command")
@@ -61,25 +72,24 @@ async def ping(ctx):
     embed.set_footer(text="Hello there",icon_url=ctx.author.avatar_url)
     await ctx.send(embed=embed)
 
-def load_cogs():
+async def load_cogs():
+    await client.wait_until_ready()
     cogs=[
             "cogs.bank",
             "cogs.moneymaking",
             "cogs.level",
-            "cogs.shopsys",
             "cogs.fun"  ,
-            "cogs.equipsys",
-            "cogs.itemusage",
             "cogs.general",
-            "cogs.math",
-            "cogs.moderation",
-            "cogs.cmenus"
+            "cogs.errors",
+            "cogs.cmenus",
+            "cogs.utility"
     ]
     for i in cogs:
         client.load_extension(i)
-        print("loaded",i)
+    client.load_extension("jishaku")
 
-@client.command(description="This command is used to load a cog.")
+    
+@client.command(brief="This command is used to load a cog.", description="This command is used to load a cog.")
 @is_owner()
 async def load(ctx,ext):
     try:
@@ -88,7 +98,7 @@ async def load(ctx,ext):
     except:
         await ctx.send(f"{ext} is not a valid cog name.")
 
-@client.command(description="This command is used to unload a cog")
+@client.command(brief="This command is used to unload a cog",description="This command is used to unload a cog")
 @is_owner()
 async def unload(ctx,ext):
     try:
@@ -97,7 +107,7 @@ async def unload(ctx,ext):
     except:
         await ctx.send(f"{ext} is not a valid cog name.")
 
-@client.command(aliases=['re'],description="This command is used to reload a cog.")
+@client.command(aliases=['re'],brief="This command is used to reload a cog.",description="This command is used to reload a cog.")
 @is_owner()
 async def reload(ctx,ext):
     try:
@@ -107,7 +117,7 @@ async def reload(ctx,ext):
     except:
         await ctx.send(f"{ext} is not a valid cog name.")  
 
-@client.command(aliases=['setprefix','changeprefix'],description="This command is used to change the server's bot prefix")      
+@client.command(aliases=['setprefix','changeprefix'],brief="This command is used to change the server's bot prefix", description="This command is used to change the server's bot prefix. This command can be used only by server admins.")      
 @has_permissions(administrator=True)
 async def prefix(ctx,prefix : str):
     with open('data/config.json','r',encoding='utf8') as r:
@@ -119,19 +129,16 @@ async def prefix(ctx,prefix : str):
         await ctx.send(f"Success, new prefix is {prefix}")
 
 @client.event
-async def on_message(message):
-       
-    if message.content=="<@!843071820878184458>":
-        await message.channel.send(f"My prefix in this server is {await client.get_prefix(message)}")       
+async def on_message(message):     
+    if message.content in ["<@!843071820878184458>"]:
+        await message.channel.send(f"My prefix in this server is {await client.get_prefix(message)}")   
     await client.process_commands(message)
 
 
 
+client.loop.create_task(load_cogs())
+client.loop.create_task(startup())
 
+client.starttime=datetime.utcnow()
 
-load_cogs()       
-
-starttime=datetime.utcnow()
-
-client.run()    
-    
+client.run(token)

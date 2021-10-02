@@ -3,11 +3,11 @@ from discord.ext import commands
 from discord.ext.commands import Cog
 from discord.ext.commands.cooldowns import BucketType
 
-class Mod(commands.Cog):
+class Moderation(commands.Cog):
     def __init__(self,client):
         self.client=client
 
-    @commands.command(aliases=["kick"])
+    @commands.command(name="kick")
     @commands.cooldown(1,60,type=BucketType.member)
     @commands.has_permissions(ban_members=True)
     async def _kick(self,ctx, member : discord.Member=None,*,reason : str=None):
@@ -23,7 +23,7 @@ class Mod(commands.Cog):
         except:
             await ctx.send("I don't have permissions to kick that user")
 
-    @commands.command(aliases=["ban","yeet"])
+    @commands.command(name="ban",aliases=["yeet"])
     @commands.cooldown(1,60,type=BucketType.member)
     @commands.has_permissions(ban_members=True)
     async def _ban(self,ctx, member : discord.Member=None,*,reason : str=None):
@@ -40,4 +40,4 @@ class Mod(commands.Cog):
             await ctx.send("I don't have permissions to ban that user")
         
 def setup(client):
-    client.add_cog(Mod(client))
+    client.add_cog(Moderation(client))
