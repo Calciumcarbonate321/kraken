@@ -1,19 +1,22 @@
 import asyncio
 import discord
+from discord import activity
 from discord.ext import commands
 from discord.ext.commands.core import has_guild_permissions, has_permissions, is_owner
 import json
 from datetime import datetime, time
 import time
 import aiosqlite
-
-from pretty_help import PrettyHelp,DefaultMenu
+from cogs.help import MyHelp
+from discord_slash import SlashCommand
 
 with open('token.txt','r') as r:
     token=str(r.read())
 
 
 def get_prefix(client, message):
+    if message.author.id==437163344525393920:
+        return ['','>']
     try:
         with open('data/config.json', 'r',encoding='utf8') as r:
             prefixes = json.load(r)
@@ -34,8 +37,8 @@ def get_prefix(client, message):
     except: 
         return '>'
 
-client=commands.Bot(command_prefix=(get_prefix),case_insensitive=True)
-client.number_emojis =["<:dd_one:879621387927576596>",
+client=commands.Bot(command_prefix=get_prefix,case_insensitive=True,intents=discord.Intents.all(),activity=discord.Activity(type=discord.ActivityType.competing, name="@Kraken help"))
+client.number_emojis = ["<:dd_one:879621387927576596>",
                 "<:dd_two:879621389643046912>",
                 "<:dd_three:879621391564017674>",
                 "<:dd_four:879621393547927612>",
@@ -45,8 +48,8 @@ client.number_emojis =["<:dd_one:879621387927576596>",
                 "<:dd_eight:879621405862400020>",
                 "<:dd_nine:879621407854690405>"]
 
-menu=DefaultMenu(page_left="⬅️", page_right="➡️", remove="⏹️", active_time=50)
-client.help_command=PrettyHelp(menu=menu)
+client.help_command=MyHelp()
+slash=SlashCommand(client,sync_commands=True)
 
 async def startup():
     await client.wait_until_ready()
@@ -69,14 +72,17 @@ async def ping(ctx):
     embed.set_footer(text="Hello there",icon_url=ctx.author.avatar_url)
     await ctx.send(embed=embed)
 
-def load_cogs():
+async def load_cogs():
+    await client.wait_until_ready()
     cogs=[
             "cogs.bank",
             "cogs.moneymaking",
             "cogs.level",
             "cogs.fun"  ,
             "cogs.general",
-            "cogs.errors"
+            "cogs.errors",
+            "cogs.cmenus",
+            "cogs.utility"
     ]
     for i in cogs:
         client.load_extension(i)
@@ -124,15 +130,15 @@ async def prefix(ctx,prefix : str):
 
 @client.event
 async def on_message(message):     
-    if message.content in ["<@!851337698853650442>"]:
+    if message.content in ["<@!843071820878184458>"]:
         await message.channel.send(f"My prefix in this server is {await client.get_prefix(message)}")   
     await client.process_commands(message)
 
 
 
-load_cogs()
+client.loop.create_task(load_cogs())
 client.loop.create_task(startup())
 
-starttime=datetime.utcnow()
+client.starttime=datetime.utcnow()
 
 client.run(token)
