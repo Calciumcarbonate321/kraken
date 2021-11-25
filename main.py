@@ -24,8 +24,8 @@ class Bot(slash_util.Bot):
     async def get_invite(self):
         return "https://discord.com/api/oauth2/authorize?client_id=843071820878184458&permissions=415797472576&scope=bot"
 
+
 bot=Bot(command_prefix=".",intents=discord.Intents.all())
 
 bot.loop.create_task(bot.load_cogs())
-
 bot.run(BOT_TOKEN)

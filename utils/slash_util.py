@@ -505,13 +505,14 @@ class ApplicationCog(commands.Cog, Generic[BotT]):
         params = []
 
         if interaction.data['type'] == 1:  # type: ignore
-            for option in interaction.data['options']:  # type: ignore
-                value = option['value']  # type: ignore
-                if option['type'] in (6, 7, 8):
-                    value = resolved_data[int(value)]
-                    
-                params.append(value)
-        else:
+            if 'options' in interaction.data:  # type: ignore
+                for option in interaction.data['options']:  # type: ignore
+                    value = option['value']  # type: ignore
+                    if option['type'] in (6, 7, 8):
+                        value = resolved_data[int(value)]
+                        
+                    params.append(value)
+        else:  # type: ignore
             params.append(resolved_data[int(interaction.data['target_id'])])  # type: ignore
         
         ctx = Context(self.bot, command, interaction)
