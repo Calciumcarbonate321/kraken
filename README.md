@@ -2,3 +2,8 @@
 
 This is a feature-rich discord bot made by me and my friend.
 
+
+
+# Credits
+
+Credits to Maya#0009 from the discord.py server for making the application command handler.
