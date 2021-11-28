@@ -3,7 +3,7 @@ from discord import emoji
 
 class invitebutton(discord.ui.Button):
     def __init__(self):
-        super().__init__(label="Invite me",style=discord.ButtonStyle.link,url="https://discord.com/api/oauth2/authorize?client_id=843071820878184458&permissions=415797472576&scope=bot",emoji="<:blurple_bot:912660314938560542>")
+        super().__init__(label="Invite me",style=discord.ButtonStyle.link,url="https://discord.com/api/oauth2/authorize?client_id=843071820878184458&permissions=415797472576&scope=bot%20applications.commands",emoji="<:blurple_bot:912660314938560542>")
 
 class sourcebutton(discord.ui.Button):
     def __init__(self):
