@@ -508,11 +508,11 @@ def _parse_resolved_data(interaction: discord.Interaction, data, state: discord.
             msg = discord.Message(state=state, channel=interaction.channel, data=d)  # type: ignore
             resolved[int(id)] = msg
 
-    resolved_roles=data.get('roles')
+    resolved_roles = data.get('roles')
     if resolved_roles:
-        for id,d in resolved_roles.items():
-            role=interaction.guild.get_role(int(id))
-            resolved[int(id)]=role
+        for id, d in resolved_roles.items():
+            role = discord.Role(guild=interaction.guild, state=state, data=d)
+            resolved[int(id)] = role
 
     return resolved
 
@@ -537,7 +537,11 @@ class ApplicationCog(commands.Cog, Generic[BotT]):
             return
             
         name = interaction.data['name']  # type: ignore
-        command = self._commands[name]
+        command = self._commands.get(name)
+        
+        if not command:
+            return
+
         state = self.bot._connection
         params: dict = command._build_arguments(interaction, state)
         

@@ -150,6 +150,9 @@ class Informative(slash_util.ApplicationCog,name="Informative"):
         embed.set_footer(text=f"Requested by {ctx.author}",icon_url=ctx.author.avatar.url)
         await ctx.send(content=None,embed=embed,view=deletethismessage(ctx.author))
 
+    @slash_util.slash_command(name="testing",description="testingg",guild_id=800701747407880193)
+    async def tester(self,ctx:slash_util.Context):
+        await ctx.send("tested")
 
 
 def setup(bot):
