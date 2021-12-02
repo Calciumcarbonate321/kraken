@@ -11,7 +11,7 @@ class Bot(slash_util.Bot):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
         self.starttime=datetime.utcnow()
-        self.botcogs=["cogs.errors","jishaku","cogs.info","cogs.usercommands"]
+        self.botcogs=["cogs.errors","jishaku","cogs.info","cogs.usercommands","cogs.music"]
     
 
     async def on_ready(self):
