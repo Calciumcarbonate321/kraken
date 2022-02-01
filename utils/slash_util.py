@@ -230,7 +230,7 @@ class Bot(commands.Bot):
                 route = discord.http.Route('POST', route)
                 await self.http.request(route, json=body)
 
-class Context(discord.ext.commands.Context,Generic[BotT, CogT]):
+class Context(Generic[BotT, CogT]):
     """
     The command interaction context.
     
@@ -246,7 +246,6 @@ class Context(discord.ext.commands.Context,Generic[BotT, CogT]):
         self.command = command
         self.interaction = interaction
         self._responded = False
-
 
     @overload
     def send(self, content: str = MISSING, *, embed: discord.Embed = MISSING, ephemeral: bool = MISSING, tts: bool = MISSING, view: discord.ui.View = MISSING, file: discord.File = MISSING) -> Coroutine[Any, Any, Union[discord.InteractionMessage, discord.WebhookMessage]]: ...

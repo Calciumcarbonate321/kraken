@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime,timedelta
 from operator import le
 from os import name
 import discord
@@ -6,6 +6,7 @@ from discord import invite
 from discord.ext import commands
 import aiohttp
 from discord.ext.commands.errors import NoPrivateMessage
+import time
 from utils import slash_util
 from utils.views import *
 from config import APPLICATION_ID,BOT_TOKEN
@@ -14,7 +15,8 @@ class Informative(slash_util.ApplicationCog,name="Informative"):
     def __init__(self,bot:slash_util.Bot):
         super().__init__(bot)
         self.bot=bot
-
+        self.stopwatches = {}
+    
     @slash_util.slash_command(name="about",description="A command about me")
     async def aboutme(self,ctx:slash_util.Context):
         """A bit about me :)"""
@@ -43,8 +45,6 @@ class Informative(slash_util.ApplicationCog,name="Informative"):
             view.add_item(invitebutton())
             return await ctx.send("Sorry this command cannot be used in a dm channel, invite me to your server to use this.",view=view)
         """Gives you information about a member in your server, just use the command and select their user from the autocomplete or type out the name yourself."""
-        if isinstance(ctx.channel,discord.DMChannel):
-            await ctx.send("This command can only be used in servers,sorry.You can do e!invite to get my invite.")
         if user is None:
             user = ctx.author
         date_format = "%a, %d %b %Y %I:%M %p"
@@ -92,11 +92,17 @@ class Informative(slash_util.ApplicationCog,name="Informative"):
                     if fcount<10:
                         cname=i.get('name')
                         scoommand=self.bot.get_application_command(cname)
-                        embed.add_field(name=scoommand.name,value=scoommand.func.__doc__)
+                        try:
+                            embed.add_field(name=scoommand.name,value=scoommand.func.__doc__)
+                        except:
+                            pass
                         fcount+=1
                     else:
                         scoommand=self.bot.get_application_command(cname)
-                        nembed.add_field(name=scoommand.name,value=scoommand.func.__doc__)
+                        try:
+                            nembed.add_field(name=scoommand.name,value=scoommand.func.__doc__)
+                        except:
+                            pass
                 view=discord.ui.View()
                 view.add_item(invitebutton())
                 await ctx.send(content=None,embeds=[embed],view=view)
@@ -150,9 +156,17 @@ class Informative(slash_util.ApplicationCog,name="Informative"):
         embed.set_footer(text=f"Requested by {ctx.author}",icon_url=ctx.author.avatar.url)
         await ctx.send(content=None,embed=embed,view=deletethismessage(ctx.author))
 
-    @slash_util.slash_command(name="testing",description="testingg",guild_id=800701747407880193)
-    async def tester(self,ctx:slash_util.Context):
-        await ctx.send("tested")
+    @slash_util.slash_command(name="stopwatch",description="A stopwatch command, run it to start the stopwatch and run it again to stop it.")
+    async def stopwatch(self, ctx):
+        author = ctx.author
+        if str(author.id) not in self.stopwatches:
+            self.stopwatches[str(author.id)] = int(time.perf_counter())
+            await ctx.send(author.mention + (" Stopwatch started!"))
+        else:
+            tmp = abs(self.stopwatches[str(author.id)] - int(time.perf_counter()))
+            tmp = str(timedelta(seconds=tmp))
+            await ctx.send(author.mention + (" Stopwatch stopped! Time: **{seconds}**").format(seconds=tmp))
+            self.stopwatches.pop(str(author.id), None)
 
 
 def setup(bot):

@@ -7,11 +7,14 @@ from difflib import get_close_matches
 import wavelink
 from wavelink.errors import QueueEmpty
 from utils.views import invitebutton
+import logging
+
 
 class CommandErrorHandler(commands.Cog):
 
     def __init__(self, bot):
         self.bot=bot
+        self.logger = logging.getLogger("discord")
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):  
@@ -89,10 +92,11 @@ class CommandErrorHandler(commands.Cog):
         
         elif isinstance(error,QueueEmpty):
             await ctx.send("Sorry the queue is empty.")
-
+'''
         else:
+            self.logger.exception(msg=f"Ignoring exception in command {ctx.command}: \n {type(error)}\n {error}\n {error.__traceback__}")
             print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
             traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
-
+'''
 def setup(client):
     client.add_cog(CommandErrorHandler(client))
