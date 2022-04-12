@@ -1,5 +1,8 @@
 .venv
 config.py
+data
 cogs/__pycache__
+cogs/secret.py
 utils/__pycache__
 __pycache__
+chromedriver.exe

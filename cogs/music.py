@@ -205,29 +205,28 @@ class Music(slash_util.ApplicationCog):
 							vc.queue.put(track)
 						total += 1
 					return await ctx.message.reply(embed = await self.embifier(True,content = f'Added {added} tracks to the queue.'))
-			elif query.startswith('https://'):
-				return await ctx.message.reply(embed = await self.embifier(False,content = 'Pls provide a valid spotify link'))
+			else:
+				tracks = await wavelink.YouTubeTrack.search(query = query)
+				if tracks is None:
+					return await ctx.message.reply(embed = await self.embifier(False,content = 'There are no songs by that name'))
+
+				emb = discord.Embed(title = 'Choose which song you want to play',description='Do it under 30 seconds',color = discord.Color.random())
+				try:
+					emb.set_thumbnail(url = tracks[0].thumb)
+				except:
+					pass
+				emb.set_author(name = ctx.author.name,icon_url=ctx.author.display_avatar)
+				view = PlayView(timeout = 30,ctx=ctx,vc=vc,tracks = tracks)
+
+				msg = await ctx.message.reply(embed = emb,view = view)
+				check = await view.wait()
+				if check == True:
+					try:
+						return await msg.edit(content = f'This message has timed out because {ctx.author.mention} did not select which song to play in 30 seconds.Try again',view=None,embed=None)
+					except:
+						return				
 		except Exception as e:
-			print(e)
-		tracks = await wavelink.YouTubeTrack.search(query = query)
-		if tracks is None:
-			return await ctx.message.reply(embed = await self.embifier(False,content = 'There are no songs by that name'))
-
-		emb = discord.Embed(title = 'Choose which song you want to play',description='Do it under 30 seconds',color = discord.Color.random())
-		try:
-			emb.set_thumbnail(url = tracks[0].thumb)
-		except:
-			pass
-		emb.set_author(name = ctx.author.name,icon_url=ctx.author.display_avatar)
-		view = PlayView(timeout = 30,ctx=ctx,vc=vc,tracks = tracks)
-
-		msg = await ctx.message.reply(embed = emb,view = view)
-		check = await view.wait()
-		if check == True:
-			try:
-				return await msg.edit(content = f'This message has timed out because {ctx.author.mention} did not select which song to play in 30 seconds.Try again',view=None,embed=None)
-			except:
-				return
+			return await ctx.message.reply(embed = await self.embifier(False,content = f'Some error occured\n {e}'))			
 
 	@commands.command(name = 'queue')
 	async def queue(self,ctx:Context):
@@ -310,7 +309,7 @@ class Music(slash_util.ApplicationCog):
 			loopvalue = 'None'
 		emb = discord.Embed(title = 'This server\'s music status',color = discord.Color.teal())
 		try:
-			emb.set_thumbnail(url = vc.track.thumb)
+			emb.set_image(url = vc.track.thumb)
 		except:
 			pass
 		current = datetime.timedelta(seconds=round(vc.position))
@@ -328,7 +327,7 @@ class Music(slash_util.ApplicationCog):
 			volume = 'Muted'
 		emb.add_field(name = '🔊 Volume:',value = volume)
 		emb.set_author(name = ctx.author.name,icon_url=ctx.author.display_avatar)
-		view = NowPlayingView(timeout=30,ctx=ctx,vc=vc)
+		view = NowPlayingView(timeout=None,ctx=ctx,vc=vc)
 		msg = await ctx.send(embed = emb,view = view)
 		check = await view.wait()
 		diabledview = View(timeout = 1)
@@ -507,5 +506,5 @@ class Music(slash_util.ApplicationCog):
 		else:
 			return await ctx.message.reply(embed = await self.embifier(False,content = 'Pls specify the type of loop correctly (q,queue,s,single,n,none)'))
 
-def setup(client:commands.Bot):
-	client.add_cog(Music(client))
+async def setup(client:commands.Bot):
+	await client.add_cog(Music(client))

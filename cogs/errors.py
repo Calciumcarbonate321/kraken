@@ -92,11 +92,17 @@ class CommandErrorHandler(commands.Cog):
         
         elif isinstance(error,QueueEmpty):
             await ctx.send("Sorry the queue is empty.")
-'''
+
         else:
-            self.logger.exception(msg=f"Ignoring exception in command {ctx.command}: \n {type(error)}\n {error}\n {error.__traceback__}")
-            print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
             traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
-'''
-def setup(client):
-    client.add_cog(CommandErrorHandler(client))
+            e=discord.Embed(title="Oops, something broke when running that command.", description=f"{error}", color=0xFF0000)
+            e.add_field(name="Traceback",value=error.__traceback__)
+            try:
+                e.add_field(name="Command",value=ctx.message.content)
+            except:
+                pass
+            e.set_footer(text="If you think this is a bug, please report it to my owner.")
+            await ctx.send(embed=e)
+
+async def setup(client):
+    await client.add_cog(CommandErrorHandler(client))

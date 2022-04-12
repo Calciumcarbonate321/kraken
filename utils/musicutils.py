@@ -6,7 +6,6 @@ from discord.ui.select import Select
 import wavelink
 from discord.ui import Button, View
 import datetime
-
 class Embifier():
 	def __init__(self,success=None,content=None,title=''):
 		self.success = success
@@ -25,7 +24,6 @@ class Embifier():
 			color = color
 		)
 		return emb
-
 class MyPlayer(wavelink.Player):
 	async def connect(self, *, timeout: float, reconnect: bool) -> None:
 		await self.guild.change_voice_state(channel=self.channel,self_deaf = True)
@@ -40,7 +38,6 @@ class MyPlayer(wavelink.Player):
 		finally:
 			self.node.players.remove(self)
 			self.cleanup()
-
 class DropDown(Select):
 	def __init__(self,ctx=None,tracks = None,vc = None):
 		self.vc:MyPlayer = vc
@@ -53,7 +50,6 @@ class DropDown(Select):
 			discord.SelectOption(label=f'{self.tracks[3].title}',description = f'{datetime.timedelta(seconds=round(tracks[3].length))}',value = 3),
 			discord.SelectOption(label=f'{self.tracks[4].title}',description = f'{datetime.timedelta(seconds=round(tracks[4].length))}',value = 4)]
 		super().__init__(placeholder='Choose which song you want to play:',options = options)
-
 	async def play_song(self,interaction:Interaction = None,label=0):
 		if self.tracks[label].length > 600:
 			await interaction.message.delete()
@@ -67,10 +63,8 @@ class DropDown(Select):
 				return await self.ctx.message.reply(embed = await Embifier(success = False,content = f'The loop is set to single so can\'t add the song to queue').embifier())
 			self.vc.queue.put(self.tracks[label])
 			await self.ctx.message.reply(embed = await Embifier(success = True,content = f'Added **{self.tracks[label].title}** to the queue ').embifier())
-
 	async def callback(self,interaction:Interaction):
 		await self.play_song(interaction = interaction,label = int(self.values[0]))
-
 class PlayView(View):
 	def __init__(self, *, timeout = 30,ctx = None,vc=None,tracks = None):
 		super().__init__(timeout=timeout)
@@ -96,18 +90,19 @@ class NowPlayingView(View):
 		self.ctx:Context = ctx
 		self.userid = ctx.author.id
 		self.vc:MyPlayer = vc
-
 	async def interaction_check(self, interaction: Interaction):
 		if interaction.user.id != self.userid:
 			await interaction.response.send_message(content = 'Those buttons are not for you',ephemeral=True)
 			return False
-		if not self.vc.is_connected():
-			await interaction.message.reply(embed = await Embifier(success = False,content = 'The bot is not connected to any vc').embifier(),view = None)
+		if self.vc is None or not self.vc.is_connected():
+			await interaction.response.send_message(embed = await Embifier(success = False,content = 'The bot is not connected to any vc').embifier(),view = None,ephemeral=True)
 			await interaction.message.delete()
+			return False
+		if interaction.user.voice is None or interaction.user.voice.channel is None or interaction.user.voice.channel.id != self.vc.channel.id:
+			await interaction.response.send_message(content = f'Pls join the voice channel I am in {self.vc.channel.mention}',ephemeral=True)
 			return False
 		else:
 			return True
-
 	async def nowplayingembed(self):
 		if self.vc.is_paused():
 			paused = 'Paused'
@@ -135,7 +130,7 @@ class NowPlayingView(View):
 		emb.add_field(name = '<a:player:936579719741210635> Queue count:',value = self.vc.queue.count)
 		emb.add_field(name = '<a:playing:936587336383336538> Loop:',value = loopvalue)
 		try:
-			emb.set_thumbnail(url = self.vc.track.thumb)
+			emb.set_image(url = self.vc.track.thumb)
 		except:
 			pass
 		volume = self.vc.volume
@@ -144,7 +139,6 @@ class NowPlayingView(View):
 		emb.add_field(name = '🔊 Volume:',value = volume)
 		emb.set_author(name = self.ctx.author.name,icon_url=self.ctx.author.display_avatar)
 		return emb
-
 	async def song_skip(self,interaction:Interaction = None):
 		if self.vc is None:
 			return await interaction.response.send_message(embed = await Embifier(success = False,content = 'I am not in a voice channel').embifier())
@@ -156,26 +150,21 @@ class NowPlayingView(View):
 			await interaction.response.edit_message(embed=emb)
 			msg = await interaction.original_message()
 			return await msg.reply(embed = await Embifier(success = True,content = 'Skipped!').embifier())
-
 		if self.vc.queue.is_empty:
 			return await interaction.response.send_message(embed = await Embifier(success = False,content = 'The queue is empty').embifier())
-
 		if self.vc.loop == 'q' or self.vc.loop == 'queue':
 			song =  self.vc.queue.get()
 			self.vc.queue.put(self.vc.track)
 			await self.vc.stop()
 			await self.vc.play(song,replace = True)
-
 		if self.vc.loop == 'n' or self.vc.loop == 'none':
 			song =  self.vc.queue.get()
 			await self.vc.stop()
 			await self.vc.play(song,replace = True)
-
 		emb = await self.nowplayingembed()
 		await interaction.response.edit_message(embed=emb)
 		msg = await interaction.original_message()
 		return await msg.reply(embed = await Embifier(success = True,content = 'Skipped!').embifier())
-
 	@discord.ui.button(label='Play/Pause',style=discord.ButtonStyle.blurple,emoji = '⏯️')
 	async def button1(self,button:Button,interaction:Interaction):
 		if self.vc.is_paused():
@@ -190,11 +179,10 @@ class NowPlayingView(View):
 			await interaction.response.edit_message(embed=emb)
 			msg = await interaction.original_message()
 			return await msg.reply(embed = await Embifier(success = True,content = 'Paused!').embifier())
-	
+
 	@discord.ui.button(label='Skip',style=discord.ButtonStyle.red)
 	async def button2(self,button:Button,interaction:Interaction):
 		await self.song_skip(interaction = interaction)
-
 	@discord.ui.button(label='Rewind',style=discord.ButtonStyle.blurple)
 	async def button3(self,button:Button,interaction:Interaction):
 		await self.vc.seek(position = 0)
@@ -202,7 +190,6 @@ class NowPlayingView(View):
 		await interaction.response.edit_message(embed=emb)
 		msg = await interaction.original_message()
 		return await msg.reply(embed = await Embifier(success = True,content = 'Rewinded!').embifier())
-
 	@discord.ui.button(label='Mute/Unmute',style=discord.ButtonStyle.red)
 	async def button4(self,button:Button,interaction:Interaction):
 		if self.vc.volume == 0:
@@ -218,6 +205,10 @@ class NowPlayingView(View):
 			muted = 'Unmuted!'
 		return await msg.reply(embed = await Embifier(success = True,content = f'{muted}').embifier())
 
+	@discord.ui.button(emoji="<a:uncheck_ravena:907507933846327327>",style=discord.ButtonStyle.red,row=2)
+	async def dele(self,button:discord.ui.Button, interaction: discord.Interaction):
+		await interaction.message.delete()
+
 class LyricsView(View):
 	def __init__(self, *, timeout = 120,ctx = None,vc=None,pagelist = None,data = None,current = 0):
 		super().__init__(timeout=timeout)
@@ -226,13 +217,11 @@ class LyricsView(View):
 		self.pagelist = pagelist
 		self.data = data
 		self.current = current
-
 	async def interaction_check(self, interaction: Interaction):
 		if interaction.user.id != self.ctx.author.id:
 			await interaction.response.send_message(content = 'Those buttons are not for you',ephemeral=True)
 			return False
 		return True
-
 	@discord.ui.button(label='Previous',style=discord.ButtonStyle.blurple)
 	async def button1(self,button:Button,interaction:Interaction):
 		if self.current != 0:
@@ -244,7 +233,6 @@ class LyricsView(View):
 			self.current = self.current-1
 		else:
 			return await interaction.response.send_message(content = 'This is the first page',ephemeral=True)
-
 	@discord.ui.button(label='Next',style=discord.ButtonStyle.blurple)
 	async def button2(self,button:Button,interaction:Interaction):
 		lastpage = len(self.pagelist)-1
