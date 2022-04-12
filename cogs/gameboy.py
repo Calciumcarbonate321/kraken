@@ -94,10 +94,7 @@ class GameButton(discord.ui.Button):
 
     async def callback(self, interaction):
         if self.btype=="Quit":
-            for i in self.view.children:
-                i.disabled=True
-            await interaction.response.edit_message(content="Game Ended.",view=self.view)
-            return
+            return await self.view.stopall(interaction)
         await self.view.button_press(self.btype)
         await self.view.rungame()
         f=await self.view.renderframes()
@@ -112,19 +109,19 @@ BUTTONS_LIST=[
 ]
 
 class GameView(discord.ui.View):
-    def __init__(self,bot,user,gamedir,message=None):
+    def __init__(self,bot,user,gamedir,cog):
         self.bot=bot
         self.user=user
+        self.cog=cog
         self.game=pyboy.PyBoy(gamedir,window_type="headless")
         self.frames=[]
         self.game.set_emulation_speed(0)
         self.screen=self.game.botsupport_manager().screen()
-        self.message=message
         super().__init__(timeout=None)
         for i in BUTTONS_LIST:
+            i.enabled=True
             self.add_item(i)
-        
-
+            
     async def button_press(self,button):
         if button not in ["Blank","Save","Load","Quit","DUp","DDown","DLeft","DRight"]:
             self.game.send_input(BUTTONS[button])
@@ -164,6 +161,11 @@ class GameView(discord.ui.View):
         f=discord.File(fp=b,filename="game.gif")
         return f
 
+    async def stopall(self,interaction):
+        self.game.stop()
+        del self.cog.games[interaction.user.id]
+        await interaction.response.edit_message(content="Game ended.",view=None)
+    
     async def interaction_check(self, interaction):
         if interaction.user!=self.user:
             await interaction.response.send_message("Not your game lol", ephemeral=True)
@@ -179,12 +181,11 @@ class GameBoyCog(commands.Cog):
     async def gb(self,ctx):
         if ctx.author.id in self.games:
             return await ctx.send("You are already playing")
-        e=await ctx.reply("Here see this game")
-        view=GameView(self.bot,ctx.author,ROM_DIR+GAME_NAME_MAP["red"],e)
+        view=GameView(self.bot,ctx.author,ROM_DIR+GAME_NAME_MAP["red"],self)
         await view.rungame()
         f=await view.renderframes()
         self.games[ctx.author.id]=view
-        await e.edit(content="Game going on...",attachments=[f],view=view)
+        await ctx.send(content="Game going on...",file=f,view=view)
                 
 
 async def setup(bot):
