@@ -1,7 +1,6 @@
 # The Kraken Bot
 
-This is a feature-rich discord bot made by me and my friend.
-
+Source code of my private bot
 
 
 # Credits
