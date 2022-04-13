@@ -1,6 +1,6 @@
 # The Kraken Bot
 
-Source code of my private bot
+Source code of my bot.
 
 
 # Credits
